@@ -19,6 +19,7 @@ const ProfileNavigation = () => {
             <Button variant="ghost" onClick={() => navigate("/jobs")}>Find Jobs</Button>
             <Button variant="ghost" onClick={() => navigate("/vault")}>My Vault</Button>
             <Button variant="ghost" onClick={() => navigate("/messages")}>Messages</Button>
+            <Button variant="ghost" onClick={() => navigate("/pricing")}>Pricing</Button>
           </nav>
         </div>
         <div className="flex items-center space-x-4">

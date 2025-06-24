@@ -173,6 +173,51 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_plans: {
+        Row: {
+          badge: string | null
+          created_at: string
+          description: string | null
+          features: Json
+          id: string
+          is_active: boolean
+          name: string
+          price_per_check: number | null
+          price_per_month: number | null
+          sort_order: number
+          updated_at: string
+          verification_limit: number | null
+        }
+        Insert: {
+          badge?: string | null
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          price_per_check?: number | null
+          price_per_month?: number | null
+          sort_order?: number
+          updated_at?: string
+          verification_limit?: number | null
+        }
+        Update: {
+          badge?: string | null
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_per_check?: number | null
+          price_per_month?: number | null
+          sort_order?: number
+          updated_at?: string
+          verification_limit?: number | null
+        }
+        Relationships: []
+      }
       references: {
         Row: {
           company: string | null
@@ -355,6 +400,57 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_subscriptions: {
+        Row: {
+          billing_cycle_end: string | null
+          billing_cycle_start: string | null
+          created_at: string
+          id: string
+          pricing_plan_id: string
+          status: string
+          updated_at: string
+          user_id: string
+          verifications_used: number
+        }
+        Insert: {
+          billing_cycle_end?: string | null
+          billing_cycle_start?: string | null
+          created_at?: string
+          id?: string
+          pricing_plan_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          verifications_used?: number
+        }
+        Update: {
+          billing_cycle_end?: string | null
+          billing_cycle_start?: string | null
+          created_at?: string
+          id?: string
+          pricing_plan_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verifications_used?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_pricing_plan_id_fkey"
+            columns: ["pricing_plan_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
