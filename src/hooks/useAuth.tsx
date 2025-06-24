@@ -3,11 +3,15 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '@/services/authService';
 
 interface AuthContextType {
   user: User | null;
   userProfile: any | null;
   loading: boolean;
+  login: (email: string, password: string) => Promise<{ user: User | null; error: string | null }>;
+  register: (email: string, password: string, fullName: string, userType: string) => Promise<{ user: User | null; error: string | null }>;
+  logout: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -65,6 +69,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const login = async (email: string, password: string) => {
+    try {
+      const result = await authService.login({ email, password });
+      return result;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return { user: null, error: error.message || 'Login failed' };
+    }
+  };
+
+  const register = async (email: string, password: string, fullName: string, userType: string) => {
+    try {
+      const result = await authService.register({ email, password, fullName, userType: userType as any });
+      return result;
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      return { user: null, error: error.message || 'Registration failed' };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+      setUserProfile(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const signOut = async () => {
+    await logout();
+  };
+
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -94,18 +133,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setUserProfile(null);
-    navigate('/');
-  };
-
   return (
     <AuthContext.Provider value={{
       user,
       userProfile,
       loading,
+      login,
+      register,
+      logout,
       signOut,
       refreshProfile
     }}>
