@@ -52,7 +52,7 @@ const Index = () => {
             </Button>
             <Button size="lg" variant="secondary" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=university")}>
               <GraduationCap className="mr-2 h-5 w-5" />
-              Admissions Office
+              University
             </Button>
           </div>
         </div>
