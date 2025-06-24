@@ -7,7 +7,8 @@ const DocumentVaultHeader = () => {
   const navigate = useNavigate();
 
   const handleBackToDashboard = () => {
-    navigate(-1);
+    // Navigate to seeker dashboard as default, or you can implement logic to detect user type
+    navigate("/dashboard/seeker");
   };
 
   return (
