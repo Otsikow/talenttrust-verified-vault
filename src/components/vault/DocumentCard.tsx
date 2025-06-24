@@ -13,20 +13,7 @@ import {
   Zap
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useDocuments } from "@/hooks/useDocuments";
-
-interface Document {
-  id: string;
-  name: string;
-  type: string;
-  issuer: string;
-  upload_date: string;
-  expiry_date: string | null;
-  status: string;
-  privacy: string;
-  file_url: string;
-  verification_requests?: any[];
-}
+import { useDocuments, Document } from "@/hooks/useDocuments";
 
 interface DocumentCardProps {
   document: Document;

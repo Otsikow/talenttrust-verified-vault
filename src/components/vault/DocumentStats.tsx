@@ -1,12 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, CheckCircle, Clock, Shield } from "lucide-react";
-
-interface Document {
-  id: string;
-  status: string;
-  verification_requests?: any[];
-}
+import { Document } from "@/hooks/useDocuments";
 
 interface DocumentStatsProps {
   documents: Document[];

@@ -20,6 +20,7 @@ export interface Document {
   metadata?: any;
   created_at: string;
   updated_at: string;
+  verification_requests?: VerificationRequest[];
 }
 
 export interface VerificationRequest {
@@ -95,7 +96,16 @@ export const useDocuments = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setDocuments(data || []);
+      
+      // Transform the data to ensure type compatibility
+      const transformedDocuments = (data || []).map(doc => ({
+        ...doc,
+        type: doc.type as Document['type'],
+        status: doc.status as Document['status'],
+        privacy: doc.privacy as Document['privacy']
+      }));
+      
+      setDocuments(transformedDocuments);
     } catch (error) {
       console.error('Error fetching documents:', error);
       toast({
