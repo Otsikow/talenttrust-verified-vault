@@ -289,6 +289,32 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_sessions: {
         Row: {
           created_at: string
@@ -531,6 +557,66 @@ export type Database = {
           },
         ]
       }
+      verifications: {
+        Row: {
+          admin_notes: string | null
+          admin_override: boolean | null
+          ai_confidence_score: number | null
+          created_at: string
+          document_id: string | null
+          explanation: string | null
+          filename: string
+          id: string
+          processed_text: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          admin_override?: boolean | null
+          ai_confidence_score?: number | null
+          created_at?: string
+          document_id?: string | null
+          explanation?: string | null
+          filename: string
+          id?: string
+          processed_text?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          admin_override?: boolean | null
+          ai_confidence_score?: number | null
+          created_at?: string
+          document_id?: string | null
+          explanation?: string | null
+          filename?: string
+          id?: string
+          processed_text?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verifications_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -539,6 +625,13 @@ export type Database = {
       cleanup_expired_sessions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
       }
       log_audit_event: {
         Args: {
@@ -566,7 +659,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -681,6 +774,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
