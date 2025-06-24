@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -14,6 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useDocuments } from "@/hooks/useDocuments";
 import { Document } from "@/types/documents";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DocumentCardProps {
   document: Document;
@@ -66,16 +68,40 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
         return;
       }
 
-      // Create a temporary anchor element to trigger download
-      const link = window.document.createElement('a');
-      link.href = document.file_url;
-      link.download = document.name || 'document';
-      link.target = '_blank';
+      // Extract the file path from the URL
+      const url = new URL(document.file_url);
+      const pathSegments = url.pathname.split('/');
+      const filePath = pathSegments.slice(-2).join('/'); // Get the last two segments (folder/filename)
+
+      // Download the file from Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('user_documents')
+        .download(filePath);
+
+      if (error) {
+        console.error('Download error:', error);
+        toast({
+          title: "Download Failed",
+          description: "Unable to download the document. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Create blob URL and trigger download
+      const blob = new Blob([data], { type: document.file_type || 'application/octet-stream' });
+      const blobUrl = URL.createObjectURL(blob);
       
-      // Append to body, click, and remove
+      const link = window.document.createElement('a');
+      link.href = blobUrl;
+      link.download = document.name || 'document';
+      
       window.document.body.appendChild(link);
       link.click();
       window.document.body.removeChild(link);
+      
+      // Clean up the blob URL
+      URL.revokeObjectURL(blobUrl);
 
       toast({
         title: "Download Started",
@@ -99,11 +125,26 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
     }
   };
 
-  const handleShareDocument = (docId: string) => {
-    toast({
-      title: "Document Shared",
-      description: "Document sharing link has been copied to your clipboard.",
-    });
+  const handleShareDocument = async () => {
+    try {
+      // Generate a shareable link for the document portfolio
+      const shareUrl = `${window.location.origin}/portfolio/${document.user_id}`;
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      
+      toast({
+        title: "Portfolio Link Copied",
+        description: "Your portfolio link has been copied to clipboard. Share it with potential employers!",
+      });
+    } catch (error) {
+      console.error('Share failed:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to copy portfolio link. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDeleteDocument = async () => {
@@ -155,7 +196,7 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
             <span className="hidden sm:inline">Download</span>
           </Button>
           {document.status === "verified" && (
-            <Button variant="outline" size="sm" onClick={() => handleShareDocument(document.id)} className="text-xs sm:text-sm">
+            <Button variant="outline" size="sm" onClick={handleShareDocument} className="text-xs sm:text-sm">
               <Share className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               <span className="hidden sm:inline">Share</span>
             </Button>
