@@ -48,6 +48,19 @@ const ProfileHeader = ({ profileData, isEditing, onEditToggle, onSave }: Profile
     onSave();
   };
 
+  // Generate initials from first and last name, or use first two letters of email if no name
+  const getInitials = () => {
+    if (profileData.firstName || profileData.lastName) {
+      return `${profileData.firstName?.[0] || ''}${profileData.lastName?.[0] || ''}`.toUpperCase();
+    }
+    return profileData.email?.slice(0, 2).toUpperCase() || 'U';
+  };
+
+  const getDisplayName = () => {
+    const fullName = `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim();
+    return fullName || profileData.email || 'Your Name';
+  };
+
   return (
     <Card className="mb-8">
       <CardContent className="p-8">
@@ -56,7 +69,7 @@ const ProfileHeader = ({ profileData, isEditing, onEditToggle, onSave }: Profile
             <Avatar className="h-24 w-24">
               <AvatarImage src="/placeholder-avatar.jpg" />
               <AvatarFallback className="text-2xl">
-                {profileData.firstName[0] || 'U'}{profileData.lastName[0] || 'U'}
+                {getInitials()}
               </AvatarFallback>
             </Avatar>
             <Button size="sm" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0">
@@ -67,10 +80,7 @@ const ProfileHeader = ({ profileData, isEditing, onEditToggle, onSave }: Profile
           <div className="flex-1">
             <div className="flex items-center justify-between mb-2">
               <h1 className="text-3xl font-bold text-gray-900">
-                {profileData.firstName || profileData.lastName ? 
-                  `${profileData.firstName} ${profileData.lastName}`.trim() : 
-                  'Your Name'
-                }
+                {getDisplayName()}
               </h1>
               <div className="flex space-x-2">
                 {!isEditing ? (

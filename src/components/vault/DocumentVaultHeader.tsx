@@ -16,7 +16,7 @@ const DocumentVaultHeader = () => {
       <div className="container mx-auto px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <img src="/lovable-uploads/1d72e634-c5ad-4e01-a22a-2cc0c4eac5c5.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
+            <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
             <span className="text-lg sm:text-xl font-bold text-gray-900">TrustTalent</span>
             <span className="hidden sm:inline text-gray-600">/ Document Vault</span>
           </div>
