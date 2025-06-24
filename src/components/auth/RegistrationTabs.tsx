@@ -8,7 +8,7 @@ interface RegistrationTabsProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   formData: any;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputInput>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent) => void;
   isLoading?: boolean;
 }
