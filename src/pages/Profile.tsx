@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,27 +21,58 @@ import {
   Camera
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { user, userProfile, logout } = useAuth();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
 
-  // Mock user data
-  const [userProfile, setUserProfile] = useState({
-    firstName: "John",
-    lastName: "Smith",
-    email: "john.smith@email.com",
-    phone: "+44 7700 900123",
-    location: "London, United Kingdom",
-    jobTitle: "Senior Software Engineer",
-    company: "Tech Solutions Ltd",
-    bio: "Experienced software engineer with over 8 years in full-stack development. Passionate about creating scalable web applications and mentoring junior developers.",
-    joinDate: "January 2023",
-    verificationScore: 95,
-    documentsVerified: 8,
-    totalDocuments: 9
+  // User profile state that gets populated from auth
+  const [profileData, setProfileData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    jobTitle: "",
+    company: "",
+    bio: "",
+    joinDate: "",
+    verificationScore: 0,
+    documentsVerified: 0,
+    totalDocuments: 0
   });
+
+  useEffect(() => {
+    if (userProfile && user) {
+      // Parse full name into first and last name
+      const nameParts = userProfile.full_name?.split(' ') || [''];
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      setProfileData({
+        firstName,
+        lastName,
+        email: userProfile.email || user.email || '',
+        phone: userProfile.phone || '',
+        location: userProfile.location || '',
+        jobTitle: userProfile.job_title || '',
+        company: userProfile.company || '',
+        bio: userProfile.bio || '',
+        joinDate: userProfile.created_at ? new Date(userProfile.created_at).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long' 
+        }) : '',
+        verificationScore: userProfile.verification_score || 0,
+        documentsVerified: userProfile.documents_verified || 0,
+        totalDocuments: userProfile.total_documents || 0
+      });
+    }
+  }, [userProfile, user]);
 
   const verifiedSkills = [
     "React", "TypeScript", "Node.js", "Python", "AWS", "Docker", "Kubernetes", "GraphQL"
@@ -57,8 +87,23 @@ const Profile = () => {
 
   const handleSave = () => {
     // Here you would typically save to your backend
+    toast({
+      title: "Success",
+      description: "Profile updated successfully",
+    });
     setIsEditing(false);
   };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
+  // Show loading or redirect if not authenticated
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -99,7 +144,7 @@ const Profile = () => {
                 <Avatar className="h-24 w-24">
                   <AvatarImage src="/placeholder-avatar.jpg" />
                   <AvatarFallback className="text-2xl">
-                    {userProfile.firstName[0]}{userProfile.lastName[0]}
+                    {profileData.firstName[0] || 'U'}{profileData.lastName[0] || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <Button size="sm" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0">
@@ -110,7 +155,10 @@ const Profile = () => {
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
                   <h1 className="text-3xl font-bold text-gray-900">
-                    {userProfile.firstName} {userProfile.lastName}
+                    {profileData.firstName || profileData.lastName ? 
+                      `${profileData.firstName} ${profileData.lastName}`.trim() : 
+                      'Your Name'
+                    }
                   </h1>
                   <div className="flex space-x-2">
                     {!isEditing ? (
@@ -132,30 +180,36 @@ const Profile = () => {
                   </div>
                 </div>
                 
-                <p className="text-lg text-gray-600 mb-4">{userProfile.jobTitle}</p>
+                <p className="text-lg text-gray-600 mb-4">
+                  {profileData.jobTitle || 'Add your job title'}
+                </p>
                 
                 <div className="flex items-center space-x-6 text-gray-600 mb-4">
                   <div className="flex items-center space-x-1">
                     <Mail className="h-4 w-4" />
-                    <span>{userProfile.email}</span>
+                    <span>{profileData.email}</span>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{userProfile.location}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined {userProfile.joinDate}</span>
-                  </div>
+                  {profileData.location && (
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="h-4 w-4" />
+                      <span>{profileData.location}</span>
+                    </div>
+                  )}
+                  {profileData.joinDate && (
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>Joined {profileData.joinDate}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center space-x-4">
                   <Badge className="bg-green-100 text-green-700">
                     <Shield className="h-3 w-3 mr-1" />
-                    {userProfile.verificationScore}% Verified
+                    {profileData.verificationScore}% Verified
                   </Badge>
                   <Badge variant="outline">
-                    {userProfile.documentsVerified}/{userProfile.totalDocuments} Documents Verified
+                    {profileData.documentsVerified}/{profileData.totalDocuments} Documents Verified
                   </Badge>
                 </div>
               </div>
@@ -183,18 +237,18 @@ const Profile = () => {
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
-                      value={userProfile.firstName}
+                      value={profileData.firstName}
                       disabled={!isEditing}
-                      onChange={(e) => setUserProfile({...userProfile, firstName: e.target.value})}
+                      onChange={(e) => setProfileData({...profileData, firstName: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label htmlFor="lastName">Surname</Label>
                     <Input
                       id="lastName"
-                      value={userProfile.lastName}
+                      value={profileData.lastName}
                       disabled={!isEditing}
-                      onChange={(e) => setUserProfile({...userProfile, lastName: e.target.value})}
+                      onChange={(e) => setProfileData({...profileData, lastName: e.target.value})}
                     />
                   </div>
                   <div>
@@ -202,36 +256,36 @@ const Profile = () => {
                     <Input
                       id="email"
                       type="email"
-                      value={userProfile.email}
+                      value={profileData.email}
                       disabled={!isEditing}
-                      onChange={(e) => setUserProfile({...userProfile, email: e.target.value})}
+                      onChange={(e) => setProfileData({...profileData, email: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
-                      value={userProfile.phone}
+                      value={profileData.phone}
                       disabled={!isEditing}
-                      onChange={(e) => setUserProfile({...userProfile, phone: e.target.value})}
+                      onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label htmlFor="location">Location</Label>
                     <Input
                       id="location"
-                      value={userProfile.location}
+                      value={profileData.location}
                       disabled={!isEditing}
-                      onChange={(e) => setUserProfile({...userProfile, location: e.target.value})}
+                      onChange={(e) => setProfileData({...profileData, location: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label htmlFor="jobTitle">Current Job Title</Label>
                     <Input
                       id="jobTitle"
-                      value={userProfile.jobTitle}
+                      value={profileData.jobTitle}
                       disabled={!isEditing}
-                      onChange={(e) => setUserProfile({...userProfile, jobTitle: e.target.value})}
+                      onChange={(e) => setProfileData({...profileData, jobTitle: e.target.value})}
                     />
                   </div>
                 </div>
@@ -242,9 +296,9 @@ const Profile = () => {
                     id="bio"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm disabled:bg-gray-50 disabled:text-gray-500"
                     rows={4}
-                    value={userProfile.bio}
+                    value={profileData.bio}
                     disabled={!isEditing}
-                    onChange={(e) => setUserProfile({...userProfile, bio: e.target.value})}
+                    onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
                   />
                 </div>
               </CardContent>
@@ -350,7 +404,11 @@ const Profile = () => {
                   <CardDescription>Important account management options</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start text-red-600 hover:text-red-700"
+                    onClick={handleLogout}
+                  >
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </Button>
