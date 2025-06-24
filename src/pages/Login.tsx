@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield } from "lucide-react";
+import { Shield, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
@@ -50,84 +49,99 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-md mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <Shield className="h-8 w-8 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Back Arrow */}
+      <div className="absolute top-6 left-6 z-10">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-center min-h-screen py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <Shield className="h-8 w-8 text-blue-600" />
+                <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+              <p className="text-gray-600">Sign in to your verified account</p>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your verified account</p>
-          </div>
 
-          {/* Login Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Sign In</CardTitle>
-              <CardDescription>Enter your credentials to access your account</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="you@example.com"
-                  />
-                </div>
+            {/* Login Form */}
+            <Card className="backdrop-blur-sm bg-white/90 border-0 shadow-xl">
+              <CardHeader>
+                <CardTitle>Sign In</CardTitle>
+                <CardDescription>Enter your credentials to access your account</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="you@example.com"
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
 
-                <Button type="submit" className="w-full" size="lg">
-                  Sign In
-                </Button>
-              </form>
-
-              <div className="mt-6 space-y-4">
-                <div className="text-center">
-                  <Button variant="link" className="text-sm">
-                    Forgot your password?
+                  <Button type="submit" className="w-full" size="lg">
+                    Sign In
                   </Button>
-                </div>
-                
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    Don't have an account?{" "}
-                    <Button variant="link" className="p-0" onClick={() => navigate("/register")}>
-                      Sign up
+                </form>
+
+                <div className="mt-6 space-y-4">
+                  <div className="text-center">
+                    <Button variant="link" className="text-sm">
+                      Forgot your password?
                     </Button>
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600">
+                      Don't have an account?{" "}
+                      <Button variant="link" className="p-0" onClick={() => navigate("/register")}>
+                        Sign up
+                      </Button>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Demo Instructions */}
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-800 font-medium mb-2">Demo Mode:</p>
+                  <p className="text-xs text-blue-600">
+                    Use emails containing "admin", "employer"/"company", "university"/"edu"/"admissions" 
+                    to see different dashboards, or any other email for job seeker experience.
                   </p>
                 </div>
-              </div>
-
-              {/* Demo Instructions */}
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium mb-2">Demo Mode:</p>
-                <p className="text-xs text-blue-600">
-                  Use emails containing "admin", "employer"/"company", "university"/"edu"/"admissions" 
-                  to see different dashboards, or any other email for job seeker experience.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Briefcase, GraduationCap } from "lucide-react";
+import { Shield, Users, Briefcase, GraduationCap, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
@@ -67,7 +66,20 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-cyan-50 to-blue-50 py-12">
+      {/* Back Arrow */}
+      <div className="absolute top-6 left-6 z-10">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
@@ -81,7 +93,7 @@ const Register = () => {
 
         {/* Registration Form */}
         <div className="max-w-md mx-auto">
-          <Card>
+          <Card className="backdrop-blur-sm bg-white/90 border-0 shadow-xl">
             <CardHeader>
               <CardTitle>Sign Up</CardTitle>
               <CardDescription>Choose your account type and get started</CardDescription>
