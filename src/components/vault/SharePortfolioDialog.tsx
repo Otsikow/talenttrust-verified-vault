@@ -30,7 +30,7 @@ const SharePortfolioDialog = ({ isOpen, onClose, documents }: SharePortfolioDial
   const [shareUrl, setShareUrl] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { userProfile } = useAuth();
 
   // Filter documents based on settings
   const filteredDocuments = documents.filter(doc => {
@@ -246,7 +246,7 @@ const SharePortfolioDialog = ({ isOpen, onClose, documents }: SharePortfolioDial
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold">{user?.full_name || 'Your Name'}</h3>
+                    <h3 className="font-semibold">{userProfile?.full_name || 'Your Name'}</h3>
                     <p className="text-sm text-gray-600">Professional Portfolio</p>
                   </div>
                   <Badge className="bg-green-100 text-green-700">
