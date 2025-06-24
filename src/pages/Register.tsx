@@ -78,14 +78,14 @@ const Register = () => {
       }
 
       toast({
-        title: "Registration Successful!",
-        description: "Please check your email to verify your account before signing in.",
+        title: "Account Created Successfully!",
+        description: "Please check your email inbox and click the verification link before you can sign in. You may need to check your spam folder.",
       });
 
       // Redirect to login page after successful registration
       setTimeout(() => {
         navigate("/login");
-      }, 2000);
+      }, 3000);
 
     } catch (error: any) {
       toast({
