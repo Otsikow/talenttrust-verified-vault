@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -52,6 +53,42 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
       case "work_sample": return "bg-pink-100 text-pink-700";
       case "cv_resume": return "bg-indigo-100 text-indigo-700";
       default: return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const handleDownloadDocument = async () => {
+    try {
+      if (!document.file_url) {
+        toast({
+          title: "Error",
+          description: "File URL not available for download",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement('a');
+      link.href = document.file_url;
+      link.download = document.name || 'document';
+      link.target = '_blank';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Download Started",
+        description: "Your document download has begun",
+      });
+    } catch (error) {
+      console.error('Download failed:', error);
+      toast({
+        title: "Download Failed",
+        description: "Unable to download the document. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -114,7 +151,7 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
         </div>
         
         <div className="flex flex-wrap items-center gap-2 sm:space-x-2">
-          <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+          <Button variant="outline" size="sm" onClick={handleDownloadDocument} className="text-xs sm:text-sm">
             <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             <span className="hidden sm:inline">Download</span>
           </Button>
