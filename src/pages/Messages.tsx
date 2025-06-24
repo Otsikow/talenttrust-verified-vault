@@ -11,6 +11,7 @@ const Messages = () => {
   const { toast } = useToast();
   const [selectedConversation, setSelectedConversation] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   // Mock conversation data with additional state
   const [conversations, setConversations] = useState([
@@ -165,6 +166,10 @@ const Messages = () => {
     });
   };
 
+  const handleToggleFavoritesFilter = () => {
+    setShowFavoritesOnly(!showFavoritesOnly);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
@@ -206,8 +211,10 @@ const Messages = () => {
             conversations={conversations}
             selectedConversation={selectedConversation}
             searchTerm={searchTerm}
+            showFavoritesOnly={showFavoritesOnly}
             onConversationSelect={setSelectedConversation}
             onSearchChange={setSearchTerm}
+            onToggleFavoritesFilter={handleToggleFavoritesFilter}
           />
           
           <MessageView
