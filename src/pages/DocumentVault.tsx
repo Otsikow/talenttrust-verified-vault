@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,10 +10,14 @@ import UploadDialog from "@/components/vault/UploadDialog";
 import DocumentStats from "@/components/vault/DocumentStats";
 import DocumentList from "@/components/vault/DocumentList";
 import DocumentControls from "@/components/vault/DocumentControls";
+import VerifyDocumentsDialog from "@/components/vault/VerifyDocumentsDialog";
+import SharePortfolioDialog from "@/components/vault/SharePortfolioDialog";
 import { useDocuments } from "@/hooks/useDocuments";
 
 const DocumentVault = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isVerifyDialogOpen, setIsVerifyDialogOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -29,6 +32,14 @@ const DocumentVault = () => {
     
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  const handleVerifyDocuments = () => {
+    setIsVerifyDialogOpen(true);
+  };
+
+  const handleSharePortfolio = () => {
+    setIsShareDialogOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -54,7 +65,7 @@ const DocumentVault = () => {
         {/* Stats Section */}
         <DocumentStats documents={documents} />
 
-        {/* Search and Filter Controls - Removed the duplicate upload button */}
+        {/* Search and Filter Controls */}
         <Card className="mb-6 sm:mb-8">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col space-y-4">
@@ -134,6 +145,7 @@ const DocumentVault = () => {
               <Button 
                 variant="outline" 
                 className="flex items-center justify-start space-x-3 h-auto p-4 hover:shadow-md transition-shadow"
+                onClick={handleVerifyDocuments}
               >
                 <Shield className="h-5 w-5 text-green-600" />
                 <div className="text-left">
@@ -145,6 +157,7 @@ const DocumentVault = () => {
               <Button 
                 variant="outline" 
                 className="flex items-center justify-start space-x-3 h-auto p-4 hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1"
+                onClick={handleSharePortfolio}
               >
                 <FileText className="h-5 w-5 text-purple-600" />
                 <div className="text-left">
@@ -169,6 +182,20 @@ const DocumentVault = () => {
         <UploadDialog 
           isOpen={isUploadDialogOpen} 
           onClose={() => setIsUploadDialogOpen(false)} 
+        />
+
+        {/* Verify Documents Dialog */}
+        <VerifyDocumentsDialog 
+          isOpen={isVerifyDialogOpen} 
+          onClose={() => setIsVerifyDialogOpen(false)}
+          documents={documents}
+        />
+
+        {/* Share Portfolio Dialog */}
+        <SharePortfolioDialog 
+          isOpen={isShareDialogOpen} 
+          onClose={() => setIsShareDialogOpen(false)}
+          documents={documents}
         />
       </div>
     </div>
