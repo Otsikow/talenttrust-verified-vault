@@ -15,7 +15,7 @@ const Index = () => {
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-blue-600" />
+            <img src="/lovable-uploads/91251101-60fc-418a-a053-cf2e636fde36.png" alt="TrustTalent Logo" className="h-8 w-8" />
             <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
             <Badge variant="secondary" className="ml-2">TalentTrust Edition</Badge>
           </div>
@@ -225,7 +225,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Shield className="h-6 w-6" />
+              <img src="/lovable-uploads/91251101-60fc-418a-a053-cf2e636fde36.png" alt="TrustTalent Logo" className="h-6 w-6" />
               <span className="text-lg font-semibold">TrustTalent</span>
             </div>
             <p className="text-gray-400">© 2024 TrustTalent. Powered by TalentTrust Engine.</p>

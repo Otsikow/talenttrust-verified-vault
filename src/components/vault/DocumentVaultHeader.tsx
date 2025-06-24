@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Shield, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const DocumentVaultHeader = () => {
@@ -15,7 +15,7 @@ const DocumentVaultHeader = () => {
       <div className="container mx-auto px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+            <img src="/lovable-uploads/91251101-60fc-418a-a053-cf2e636fde36.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
             <span className="text-lg sm:text-xl font-bold text-gray-900">TrustTalent</span>
             <span className="hidden sm:inline text-gray-600">/ Document Vault</span>
           </div>
