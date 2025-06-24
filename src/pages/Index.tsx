@@ -227,7 +227,7 @@ const Index = () => {
               <img src="/lovable-uploads/91251101-60fc-418a-a053-cf2e636fde36.png" alt="TrustTalent Logo" className="h-6 w-6" />
               <span className="text-lg font-semibold">TrustTalent</span>
             </div>
-            <p className="text-gray-400">© 2024 TrustTalent. Powered by TalentTrust Engine.</p>
+            <p className="text-gray-400">© 2025 TrustTalent. Powered by TalentTrust Engine.</p>
           </div>
         </div>
       </footer>
