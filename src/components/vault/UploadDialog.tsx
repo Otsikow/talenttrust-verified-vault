@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ const UploadDialog = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentName, setDocumentName] = useState("");
   const [documentType, setDocumentType] = useState("");
+  const [customDocumentType, setCustomDocumentType] = useState("");
   const [issuer, setIssuer] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -30,6 +32,7 @@ const UploadDialog = () => {
     setSelectedFile(null);
     setDocumentName("");
     setDocumentType("");
+    setCustomDocumentType("");
     setIssuer("");
     setExpiryDate("");
     setIsUploading(false);
@@ -38,6 +41,27 @@ const UploadDialog = () => {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select a file smaller than 10MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select a PDF, JPEG, or PNG file",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setSelectedFile(file);
       if (!documentName) {
         setDocumentName(file.name.replace(/\.[^/.]+$/, ""));
@@ -87,9 +111,21 @@ const UploadDialog = () => {
         return;
       }
 
+      // Use custom document type if "other" is selected
+      const finalDocumentType = documentType === "other" ? customDocumentType : documentType;
+
+      if (documentType === "other" && !customDocumentType) {
+        toast({
+          title: "Missing Custom Type",
+          description: "Please specify the custom document type",
+          variant: "destructive"
+        });
+        return;
+      }
+
       await uploadDocument(fileToUpload, {
         name: documentName,
-        type: documentType as any,
+        type: finalDocumentType as any,
         issuer: issuer,
         expiry_date: expiryDate || undefined,
         privacy: 'private'
@@ -99,6 +135,11 @@ const UploadDialog = () => {
       resetUploadForm();
     } catch (error) {
       console.error('Upload failed:', error);
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive"
+      });
     } finally {
       setIsUploading(false);
     }
@@ -115,7 +156,7 @@ const UploadDialog = () => {
           Upload Document
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md mx-4 sm:mx-auto">
+      <DialogContent className="max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Upload New Document</DialogTitle>
           <DialogDescription>
@@ -154,12 +195,17 @@ const UploadDialog = () => {
               {uploadMethod === "file" ? "Select File" : "Capture Document"}
             </Label>
             {uploadMethod === "file" ? (
-              <Input 
-                id="file" 
-                type="file" 
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={handleFileSelect}
-              />
+              <div className="space-y-2">
+                <Input 
+                  id="file" 
+                  type="file" 
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileSelect}
+                />
+                <p className="text-xs text-gray-500">
+                  Supported formats: PDF, JPEG, PNG (max 10MB)
+                </p>
+              </div>
             ) : (
               <div className="space-y-2">
                 <Button 
@@ -208,15 +254,37 @@ const UploadDialog = () => {
                 <SelectItem value="reference">Reference</SelectItem>
                 <SelectItem value="work_sample">Work Sample</SelectItem>
                 <SelectItem value="cv_resume">CV/Resume</SelectItem>
+                <SelectItem value="transcript">Transcript</SelectItem>
+                <SelectItem value="passport">Passport</SelectItem>
+                <SelectItem value="id_card">ID Card</SelectItem>
+                <SelectItem value="birth_certificate">Birth Certificate</SelectItem>
+                <SelectItem value="marriage_certificate">Marriage Certificate</SelectItem>
+                <SelectItem value="bank_statement">Bank Statement</SelectItem>
+                <SelectItem value="insurance_document">Insurance Document</SelectItem>
+                <SelectItem value="tax_document">Tax Document</SelectItem>
+                <SelectItem value="medical_record">Medical Record</SelectItem>
+                <SelectItem value="other">Other (specify below)</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {documentType === "other" && (
+            <div>
+              <Label htmlFor="customType">Custom Document Type *</Label>
+              <Input 
+                id="customType" 
+                placeholder="e.g., Professional Membership Card"
+                value={customDocumentType}
+                onChange={(e) => setCustomDocumentType(e.target.value)}
+              />
+            </div>
+          )}
           
           <div>
             <Label htmlFor="issuer">Issuing Institution *</Label>
             <Input 
               id="issuer" 
-              placeholder="e.g., Stanford University"
+              placeholder="e.g., Stanford University, DMV, etc."
               value={issuer}
               onChange={(e) => setIssuer(e.target.value)}
             />
