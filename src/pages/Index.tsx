@@ -16,13 +16,13 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-8 w-8" />
-            <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
+            <span className="text-xl sm:text-2xl font-bold text-gray-900">TrustTalent</span>
           </div>
-          <div className="flex space-x-4">
-            <Button variant="outline" onClick={() => navigate("/login")}>
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <Button variant="outline" size="sm" onClick={() => navigate("/login")} className="text-sm">
               Sign In
             </Button>
-            <Button onClick={() => navigate("/register")}>
+            <Button size="sm" onClick={() => navigate("/register")} className="text-sm">
               Get Started
             </Button>
           </div>
@@ -32,11 +32,11 @@ const Index = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             Verify. Trust. Hire.
             <span className="block text-blue-600 mt-2">The Future of Talent Verification</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             TrustTalent revolutionises hiring and admissions with AI-powered verification of degrees, certificates, 
             references, and work samples. Build trust, reduce fraud, make confident decisions.
           </p>
