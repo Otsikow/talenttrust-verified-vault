@@ -8,12 +8,17 @@ export const documentService = {
     const { data: user } = await supabase.auth.getUser();
     if (!user.user) return [];
 
-    // Log access to documents
-    await securityService.logAuditEvent({
-      user_id: user.user.id,
-      action: 'view_documents',
-      resource_type: 'documents'
-    });
+    // Log access to documents (with error handling)
+    try {
+      await securityService.logAuditEvent({
+        user_id: user.user.id,
+        action: 'view_documents',
+        resource_type: 'documents'
+      });
+    } catch (error) {
+      console.error('Failed to log audit event:', error);
+      // Continue execution - audit logging shouldn't block main functionality
+    }
 
     const { data, error } = await supabase
       .from('documents')
@@ -80,12 +85,29 @@ export const documentService = {
       .from('user_documents')
       .getPublicUrl(filePath);
 
+    // Map document type to valid database enum value
+    let dbDocumentType = documentData.type || 'certificate';
+    
+    // List of valid document types from the database enum
+    const validTypes = [
+      'degree', 'certificate', 'license', 'reference', 'work_sample', 
+      'cv_resume', 'transcript', 'passport', 'id_card', 'birth_certificate', 
+      'marriage_certificate', 'bank_statement', 'insurance_document', 
+      'tax_document', 'medical_record'
+    ];
+    
+    // If the type is not in the valid enum list, default to 'certificate'
+    if (!validTypes.includes(dbDocumentType)) {
+      console.log(`Custom document type "${dbDocumentType}" mapped to "certificate"`);
+      dbDocumentType = 'certificate';
+    }
+
     const { data, error } = await supabase
       .from('documents')
       .insert({
         user_id: currentUser.id,
         name: encryptedName,
-        type: documentData.type || 'certificate',
+        type: dbDocumentType,
         issuer: encryptedIssuer,
         file_url: publicUrl,
         file_size: file.size,
@@ -95,26 +117,34 @@ export const documentService = {
         status: 'uploaded',
         privacy: documentData.privacy || 'private',
         encrypted: true,
-        malware_scan_status: 'pending'
+        malware_scan_status: 'pending',
+        // Store the original custom type in metadata if it was different
+        metadata: dbDocumentType !== documentData.type ? { original_type: documentData.type } : null
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    // Log document upload
-    await securityService.logAuditEvent({
-      user_id: currentUser.id,
-      action: 'document_upload',
-      resource_type: 'document',
-      resource_id: data.id,
-      details: {
-        file_name: file.name,
-        file_size: file.size,
-        file_type: file.type,
-        encrypted: true
-      }
-    });
+    // Log document upload (with error handling)
+    try {
+      await securityService.logAuditEvent({
+        user_id: currentUser.id,
+        action: 'document_upload',
+        resource_type: 'document',
+        resource_id: data.id,
+        details: {
+          file_name: file.name,
+          file_size: file.size,
+          file_type: file.type,
+          encrypted: true,
+          original_type: documentData.type
+        }
+      });
+    } catch (error) {
+      console.error('Failed to log audit event:', error);
+      // Continue execution - audit logging shouldn't block main functionality
+    }
 
     return data;
   },
@@ -141,17 +171,22 @@ export const documentService = {
       .update({ status: 'pending' })
       .eq('id', documentId);
 
-    // Log verification request
-    await securityService.logAuditEvent({
-      user_id: currentUser.id,
-      action: 'verification_request',
-      resource_type: 'document',
-      resource_id: documentId,
-      details: {
-        request_type: requestType,
-        request_id: data.id
-      }
-    });
+    // Log verification request (with error handling)
+    try {
+      await securityService.logAuditEvent({
+        user_id: currentUser.id,
+        action: 'verification_request',
+        resource_type: 'document',
+        resource_id: documentId,
+        details: {
+          request_type: requestType,
+          request_id: data.id
+        }
+      });
+    } catch (error) {
+      console.error('Failed to log audit event:', error);
+      // Continue execution - audit logging shouldn't block main functionality
+    }
 
     return data;
   },
@@ -164,16 +199,21 @@ export const documentService = {
 
     if (error) throw error;
 
-    // Log document deletion
-    const { data: user } = await supabase.auth.getUser();
-    if (user.user) {
-      await securityService.logAuditEvent({
-        user_id: user.user.id,
-        action: 'document_delete',
-        resource_type: 'document',
-        resource_id: documentId,
-        details: { permanent_deletion: true }
-      });
+    // Log document deletion (with error handling)
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (user.user) {
+        await securityService.logAuditEvent({
+          user_id: user.user.id,
+          action: 'document_delete',
+          resource_type: 'document',
+          resource_id: documentId,
+          details: { permanent_deletion: true }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to log audit event:', error);
+      // Continue execution - audit logging shouldn't block main functionality
     }
   },
 

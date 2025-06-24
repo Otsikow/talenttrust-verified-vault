@@ -90,21 +90,28 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
         return;
       }
 
-      // Use custom document type if "other" is selected
-      const finalDocumentType = documentType === "other" ? customDocumentType : documentType;
-
-      if (documentType === "other" && !customDocumentType) {
-        toast({
-          title: "Missing Custom Type",
-          description: "Please specify the custom document type",
-          variant: "destructive"
-        });
-        return;
+      // Use custom document type if "other" is selected, otherwise use the selected type
+      let finalDocumentType: string;
+      if (documentType === "other") {
+        if (!customDocumentType.trim()) {
+          toast({
+            title: "Missing Custom Type",
+            description: "Please specify the custom document type",
+            variant: "destructive"
+          });
+          return;
+        }
+        // For "other" types, we'll store the custom type directly
+        finalDocumentType = customDocumentType.trim();
+      } else {
+        finalDocumentType = documentType;
       }
+
+      console.log('Uploading document with type:', finalDocumentType);
 
       await uploadDocument(fileToUpload, {
         name: documentName,
-        type: finalDocumentType as any,
+        type: finalDocumentType as any, // We'll handle custom types in the service
         issuer: issuer,
         expiry_date: expiryDate || undefined,
         privacy: 'private'
