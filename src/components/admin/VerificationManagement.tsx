@@ -14,13 +14,14 @@ interface Verification {
   user_id: string;
   document_id: string | null;
   filename: string;
-  status: 'pending' | 'verified' | 'suspicious' | 'failed';
-  explanation: string;
-  ai_confidence_score: number;
-  admin_override: boolean;
+  status: string; // Changed from union type to string to match database
+  explanation: string | null;
+  ai_confidence_score: number | null;
+  admin_override: boolean | null;
   admin_notes: string | null;
   created_at: string;
   updated_at: string;
+  processed_text: string | null;
 }
 
 const VerificationManagement = () => {
@@ -163,7 +164,7 @@ const VerificationManagement = () => {
                 </div>
                 
                 <div className="text-sm text-gray-700">
-                  <p><strong>AI Analysis:</strong> {verification.explanation}</p>
+                  <p><strong>AI Analysis:</strong> {verification.explanation || 'No explanation available'}</p>
                   {verification.ai_confidence_score && (
                     <p><strong>Confidence:</strong> {verification.ai_confidence_score}%</p>
                   )}

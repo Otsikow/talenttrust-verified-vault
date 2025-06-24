@@ -108,8 +108,8 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
 
       console.log('Uploading document with type:', finalDocumentType);
 
-      // First upload the document
-      const uploadedDocument = await uploadDocument(fileToUpload, {
+      // First upload the document - uploadDocument doesn't return the document object
+      await uploadDocument(fileToUpload, {
         name: documentName,
         type: finalDocumentType as any,
         issuer: issuer,
@@ -117,13 +117,10 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
         privacy: 'private'
       });
 
-      // Then trigger verification
+      // Then trigger verification without document ID since we don't have it
       try {
         const { verificationService } = await import('@/services/verificationService');
-        const verificationResult = await verificationService.verifyDocument(
-          fileToUpload, 
-          uploadedDocument?.id
-        );
+        const verificationResult = await verificationService.verifyDocument(fileToUpload);
 
         if (verificationResult.success) {
           toast({
