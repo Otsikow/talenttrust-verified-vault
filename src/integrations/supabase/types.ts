@@ -9,16 +9,65 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           created_at: string
+          encrypted: boolean | null
+          encryption_key_id: string | null
           expiry_date: string | null
+          file_hash: string | null
           file_size: number | null
           file_type: string | null
           file_url: string
           id: string
           institution_id: string | null
           issuer: string
+          malware_scan_date: string | null
+          malware_scan_status: string | null
           metadata: Json | null
           name: string
           privacy: string
@@ -30,13 +79,18 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          encrypted?: boolean | null
+          encryption_key_id?: string | null
           expiry_date?: string | null
+          file_hash?: string | null
           file_size?: number | null
           file_type?: string | null
           file_url: string
           id?: string
           institution_id?: string | null
           issuer: string
+          malware_scan_date?: string | null
+          malware_scan_status?: string | null
           metadata?: Json | null
           name: string
           privacy?: string
@@ -48,13 +102,18 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          encrypted?: boolean | null
+          encryption_key_id?: string | null
           expiry_date?: string | null
+          file_hash?: string | null
           file_size?: number | null
           file_type?: string | null
           file_url?: string
           id?: string
           institution_id?: string | null
           issuer?: string
+          malware_scan_date?: string | null
+          malware_scan_status?: string | null
           metadata?: Json | null
           name?: string
           privacy?: string
@@ -183,31 +242,143 @@ export type Database = {
           },
         ]
       }
+      security_events: {
+        Row: {
+          created_at: string
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          location: string | null
+          resolved: boolean | null
+          severity: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          location?: string | null
+          resolved?: boolean | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          location?: string | null
+          resolved?: boolean | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          is_active: boolean | null
+          last_activity: string
+          refresh_token: string
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean | null
+          last_activity?: string
+          refresh_token: string
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean | null
+          last_activity?: string
+          refresh_token?: string
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
+          account_locked_until: string | null
           auth_id: string
           created_at: string
           email: string
+          failed_login_attempts: number | null
           full_name: string | null
           id: string
+          last_login_at: string | null
+          last_login_ip: unknown | null
+          mfa_enabled: boolean | null
+          mfa_secret: string | null
           updated_at: string
           user_type: string
         }
         Insert: {
+          account_locked_until?: string | null
           auth_id: string
           created_at?: string
           email: string
+          failed_login_attempts?: number | null
           full_name?: string | null
           id?: string
+          last_login_at?: string | null
+          last_login_ip?: unknown | null
+          mfa_enabled?: boolean | null
+          mfa_secret?: string | null
           updated_at?: string
           user_type?: string
         }
         Update: {
+          account_locked_until?: string | null
           auth_id?: string
           created_at?: string
           email?: string
+          failed_login_attempts?: number | null
           full_name?: string | null
           id?: string
+          last_login_at?: string | null
+          last_login_ip?: unknown | null
+          mfa_enabled?: boolean | null
+          mfa_secret?: string | null
           updated_at?: string
           user_type?: string
         }
@@ -341,7 +512,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      log_audit_event: {
+        Args: {
+          p_user_id: string
+          p_action: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_ip_address?: unknown
+          p_user_agent?: string
+          p_details?: Json
+        }
+        Returns: string
+      }
+      log_security_event: {
+        Args: {
+          p_event_type: string
+          p_user_id?: string
+          p_ip_address?: unknown
+          p_user_agent?: string
+          p_location?: string
+          p_severity?: string
+          p_details?: Json
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

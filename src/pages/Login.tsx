@@ -1,52 +1,90 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, ArrowLeft } from "lucide-react";
+import { Shield, ArrowLeft, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, user, loading } = useAuth();
   
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && !loading) {
+      navigate("/dashboard/seeker");
+    }
+  }, [user, loading, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     
-    // Mock login - in real app, this would integrate with Supabase Auth
-    // For demo, we'll redirect based on email pattern
-    const { email } = formData;
-    
-    toast({
-      title: "Welcome back!",
-      description: "Logging you in...",
-    });
+    if (!formData.email || !formData.password) {
+      setError("Please fill in all required fields.");
+      return;
+    }
 
-    setTimeout(() => {
-      if (email.includes("admin")) {
-        navigate("/dashboard/admin");
-      } else if (email.includes("employer") || email.includes("company")) {
-        navigate("/dashboard/employer");
-      } else if (email.includes("university") || email.includes("edu") || email.includes("admissions")) {
-        navigate("/dashboard/university");
+    setIsLoading(true);
+
+    try {
+      const result = await login(formData.email, formData.password);
+      
+      if (result.error) {
+        setError(result.error);
+        
+        // Show specific error messages for common issues
+        if (result.error.includes('Invalid login credentials')) {
+          setError("Invalid email or password. Please check your credentials and try again.");
+        } else if (result.error.includes('too many')) {
+          setError("Too many login attempts. Please wait 15 minutes before trying again.");
+        }
       } else {
-        navigate("/dashboard/seeker");
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+        // Navigation will be handled by the useEffect hook
       }
-    }, 1000);
+    } catch (err) {
+      console.error('Login error:', err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null); // Clear error when user starts typing
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <Shield className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -83,9 +121,16 @@ const Login = () => {
                 <CardDescription>Enter your credentials to access your account</CardDescription>
               </CardHeader>
               <CardContent>
+                {error && (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -94,11 +139,12 @@ const Login = () => {
                       onChange={handleInputChange}
                       required
                       placeholder="you@example.com"
+                      disabled={isLoading}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Password *</Label>
                     <Input
                       id="password"
                       name="password"
@@ -106,11 +152,17 @@ const Login = () => {
                       value={formData.password}
                       onChange={handleInputChange}
                       required
+                      disabled={isLoading}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
-                    Sign In
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    size="lg"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Signing In..." : "Sign In"}
                   </Button>
                 </form>
 
@@ -131,12 +183,15 @@ const Login = () => {
                   </div>
                 </div>
 
-                {/* Demo Instructions */}
+                {/* Security Notice */}
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-800 font-medium mb-2">Demo Mode:</p>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Shield className="h-4 w-4 text-blue-600" />
+                    <p className="text-sm text-blue-800 font-medium">Secure Login</p>
+                  </div>
                   <p className="text-xs text-blue-600">
-                    Use emails containing "admin", "employer"/"company", "university"/"edu"/"admissions" 
-                    to see different dashboards, or any other email for job seeker experience.
+                    Your connection is encrypted with TLS 1.3. We monitor for suspicious activity 
+                    and will alert you of any security concerns.
                   </p>
                 </div>
               </CardContent>
