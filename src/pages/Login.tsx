@@ -9,6 +9,7 @@ import { Shield, ArrowLeft, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ const Login = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -51,6 +55,8 @@ const Login = () => {
           setError("Invalid email or password. Please check your credentials and try again.");
         } else if (result.error.includes('too many')) {
           setError("Too many login attempts. Please wait 15 minutes before trying again.");
+        } else if (result.error.includes('Email not confirmed')) {
+          setError("Please check your email and click the confirmation link before signing in.");
         }
       } else {
         toast({
@@ -64,6 +70,40 @@ const Login = () => {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    
+    if (!resetEmail) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    setIsResetting(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        toast({
+          title: "Password reset email sent",
+          description: "Please check your email for password reset instructions.",
+        });
+        setShowForgotPassword(false);
+        setResetEmail("");
+      }
+    } catch (err) {
+      console.error('Password reset error:', err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -117,8 +157,13 @@ const Login = () => {
             {/* Login Form */}
             <Card className="backdrop-blur-sm bg-white/90 border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Sign In</CardTitle>
-                <CardDescription>Enter your credentials to access your account</CardDescription>
+                <CardTitle>{showForgotPassword ? "Reset Password" : "Sign In"}</CardTitle>
+                <CardDescription>
+                  {showForgotPassword 
+                    ? "Enter your email to receive password reset instructions"
+                    : "Enter your credentials to access your account"
+                  }
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {error && (
@@ -128,60 +173,106 @@ const Login = () => {
                   </Alert>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="you@example.com"
-                      disabled={isLoading}
-                    />
-                  </div>
+                {showForgotPassword ? (
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="resetEmail">Email *</Label>
+                      <Input
+                        id="resetEmail"
+                        name="resetEmail"
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        required
+                        placeholder="you@example.com"
+                        disabled={isResetting}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password *</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    size="lg"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Signing In..." : "Sign In"}
-                  </Button>
-                </form>
-
-                <div className="mt-6 space-y-4">
-                  <div className="text-center">
-                    <Button variant="link" className="text-sm">
-                      Forgot your password?
-                    </Button>
-                  </div>
-                  
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600">
-                      Don't have an account?{" "}
-                      <Button variant="link" className="p-0" onClick={() => navigate("/register")}>
-                        Sign up
+                    <div className="flex gap-2">
+                      <Button 
+                        type="submit" 
+                        className="flex-1" 
+                        disabled={isResetting}
+                      >
+                        {isResetting ? "Sending..." : "Send Reset Email"}
                       </Button>
-                    </p>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setResetEmail("");
+                          setError(null);
+                        }}
+                        disabled={isResetting}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="you@example.com"
+                        disabled={isLoading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password *</Label>
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      size="lg"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Signing In..." : "Sign In"}
+                    </Button>
+                  </form>
+                )}
+
+                {!showForgotPassword && (
+                  <div className="mt-6 space-y-4">
+                    <div className="text-center">
+                      <Button 
+                        variant="link" 
+                        className="text-sm"
+                        onClick={() => setShowForgotPassword(true)}
+                      >
+                        Forgot your password?
+                      </Button>
+                    </div>
+                    
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600">
+                        Don't have an account?{" "}
+                        <Button variant="link" className="p-0" onClick={() => navigate("/register")}>
+                          Sign up
+                        </Button>
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Security Notice */}
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
