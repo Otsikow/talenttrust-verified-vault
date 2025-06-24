@@ -36,6 +36,30 @@ export const CommonFormFields: React.FC<CommonFormFieldsProps> = ({
           required
         />
       </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
     </>
   );
 };

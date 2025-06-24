@@ -8,8 +8,9 @@ interface RegistrationTabsProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   formData: any;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputInput>) => void;
   handleSubmit: (e: React.FormEvent) => void;
+  isLoading?: boolean;
 }
 
 export const RegistrationTabs: React.FC<RegistrationTabsProps> = ({
@@ -17,7 +18,8 @@ export const RegistrationTabs: React.FC<RegistrationTabsProps> = ({
   setActiveTab,
   formData,
   handleInputChange,
-  handleSubmit
+  handleSubmit,
+  isLoading = false
 }) => {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -35,7 +37,7 @@ export const RegistrationTabs: React.FC<RegistrationTabsProps> = ({
           University
         </TabsTrigger>
         <TabsTrigger value="admin" className="text-xs">
-          <img src="/lovable-uploads/50f771b2-c841-4b41-8a90-1fa61ce4d7f9.png" alt="TrustTalent" className="h-3 w-3 mr-1" />
+          <img src="/lovable-uploads/1d72e634-c5ad-4e01-a22a-2cc0c4eac5c5.png" alt="TrustTalent" className="h-3 w-3 mr-1" />
           Admin
         </TabsTrigger>
       </TabsList>
@@ -45,6 +47,7 @@ export const RegistrationTabs: React.FC<RegistrationTabsProps> = ({
         formData={formData}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
+        isLoading={isLoading}
       />
     </Tabs>
   );

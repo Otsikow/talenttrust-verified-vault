@@ -9,13 +9,15 @@ interface RegistrationFormProps {
   formData: any;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent) => void;
+  isLoading?: boolean;
 }
 
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   activeTab,
   formData,
   handleInputChange,
-  handleSubmit
+  handleSubmit,
+  isLoading = false
 }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-6">
@@ -30,8 +32,8 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         handleInputChange={handleInputChange}
       />
 
-      <Button type="submit" className="w-full" size="lg">
-        Create Account
+      <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+        {isLoading ? "Creating Account..." : "Create Account"}
       </Button>
     </form>
   );
