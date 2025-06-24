@@ -1,0 +1,38 @@
+
+import { Button } from "@/components/ui/button";
+import { Shield, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const DocumentVaultHeader = () => {
+  const navigate = useNavigate();
+
+  const handleBackToDashboard = () => {
+    navigate(-1);
+  };
+
+  return (
+    <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+      <div className="container mx-auto px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+            <span className="text-lg sm:text-xl font-bold text-gray-900">TrustTalent</span>
+            <span className="hidden sm:inline text-gray-600">/ Document Vault</span>
+          </div>
+          <Button 
+            onClick={handleBackToDashboard}
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-1 sm:space-x-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Back to Dashboard</span>
+            <span className="sm:hidden">Back</span>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default DocumentVaultHeader;
