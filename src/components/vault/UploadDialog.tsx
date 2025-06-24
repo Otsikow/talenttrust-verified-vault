@@ -128,26 +128,19 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
     setIsOpen(false);
   };
 
-  const DialogComponent = externalIsOpen !== undefined ? 
-    ({ children }: { children: React.ReactNode }) => <>{children}</> :
-    Dialog;
-
-  const TriggerComponent = externalIsOpen !== undefined ? 
-    ({ children }: { children: React.ReactNode }) => null :
-    DialogTrigger;
-
+  // Always use Dialog component to maintain context
   return (
-    <DialogComponent open={isOpen} onOpenChange={(open) => {
+    <Dialog open={isOpen} onOpenChange={(open) => {
       setIsOpen(open);
       if (!open) resetUploadForm();
     }}>
-      {!externalIsOpen && (
-        <TriggerComponent asChild>
+      {externalIsOpen === undefined && (
+        <DialogTrigger asChild>
           <Button className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Upload Document
           </Button>
-        </TriggerComponent>
+        </DialogTrigger>
       )}
       <DialogContent className="max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -192,7 +185,7 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
           />
         </div>
       </DialogContent>
-    </DialogComponent>
+    </Dialog>
   );
 };
 
