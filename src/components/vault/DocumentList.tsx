@@ -1,9 +1,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { FileText, Upload } from "lucide-react";
+import { FileText } from "lucide-react";
 import DocumentCard from "./DocumentCard";
+import UploadDialog from "./UploadDialog";
 import { Document } from "@/types/documents";
 
 interface DocumentListProps {
@@ -40,22 +39,7 @@ const DocumentList = ({ documents, filteredDocuments, searchTerm, filterType, fi
                 }
               </p>
               {!searchTerm && filterType === "all" && filterStatus === "all" && (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Document
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md mx-4 sm:mx-auto">
-                    <DialogHeader>
-                      <DialogTitle>Upload Your First Document</DialogTitle>
-                      <DialogDescription>
-                        Start building your verified credential profile
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
+                <UploadDialog />
               )}
             </div>
           )}
