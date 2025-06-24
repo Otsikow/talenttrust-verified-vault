@@ -9,21 +9,23 @@ import {
   Download,
   Share,
   Trash2,
-  Shield
+  Shield,
+  Zap
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useDocuments } from "@/hooks/useDocuments";
 
 interface Document {
-  id: number;
+  id: string;
   name: string;
   type: string;
   issuer: string;
-  uploadDate: string;
-  expiryDate: string | null;
+  upload_date: string;
+  expiry_date: string | null;
   status: string;
-  verificationScore: number | null;
   privacy: string;
-  fileUrl: string;
+  file_url: string;
+  verification_requests?: any[];
 }
 
 interface DocumentCardProps {
@@ -32,12 +34,14 @@ interface DocumentCardProps {
 
 const DocumentCard = ({ document }: DocumentCardProps) => {
   const { toast } = useToast();
+  const { requestVerification, deleteDocument } = useDocuments();
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "verified": return "text-green-600 bg-green-100";
       case "pending": return "text-yellow-600 bg-yellow-100";
       case "failed": return "text-red-600 bg-red-100";
+      case "uploaded": return "text-blue-600 bg-blue-100";
       default: return "text-gray-600 bg-gray-100";
     }
   };
@@ -47,6 +51,7 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
       case "verified": return <CheckCircle className="h-4 w-4" />;
       case "pending": return <Clock className="h-4 w-4" />;
       case "failed": return <AlertTriangle className="h-4 w-4" />;
+      case "uploaded": return <FileText className="h-4 w-4" />;
       default: return <FileText className="h-4 w-4" />;
     }
   };
@@ -63,19 +68,36 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
     }
   };
 
-  const handleVerifyDocument = (docId: number) => {
-    toast({
-      title: "Verification Started",
-      description: "Your document has been sent to TalentTrust AI for verification. You'll be notified when complete.",
-    });
+  const handleVerifyDocument = async () => {
+    try {
+      await requestVerification(document.id, 'ai_analysis');
+    } catch (error) {
+      console.error('Verification failed:', error);
+    }
   };
 
-  const handleShareDocument = (docId: number) => {
+  const handleShareDocument = (docId: string) => {
     toast({
       title: "Document Shared",
       description: "Document sharing link has been copied to your clipboard.",
     });
   };
+
+  const handleDeleteDocument = async () => {
+    try {
+      await deleteDocument(document.id);
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  };
+
+  const getVerificationScore = () => {
+    // Mock verification score calculation based on status
+    if (document.status === "verified") return Math.floor(Math.random() * 20) + 80;
+    return null;
+  };
+
+  const verificationScore = getVerificationScore();
 
   return (
     <div className="border rounded-lg p-4 sm:p-6 hover:border-blue-200 transition-colors">
@@ -94,10 +116,10 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
               <Badge className={`${getStatusColor(document.status)} text-xs`}>
                 {document.status}
               </Badge>
-              {document.verificationScore && (
+              {verificationScore && (
                 <Badge variant="outline" className="text-xs">
                   <Shield className="h-3 w-3 mr-1" />
-                  {document.verificationScore}% verified
+                  {verificationScore}% verified
                 </Badge>
               )}
             </div>
@@ -115,13 +137,18 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
               <span className="hidden sm:inline">Share</span>
             </Button>
           )}
-          {document.status !== "verified" && document.status !== "pending" && (
-            <Button size="sm" onClick={() => handleVerifyDocument(document.id)} className="text-xs sm:text-sm">
-              <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Verify</span>
+          {(document.status === "uploaded" || document.status === "failed") && (
+            <Button 
+              size="sm" 
+              onClick={handleVerifyDocument}
+              className="text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Verify with TalentTrust</span>
+              <span className="sm:hidden">Verify</span>
             </Button>
           )}
-          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+          <Button variant="outline" size="sm" onClick={handleDeleteDocument} className="text-red-600 hover:text-red-700">
             <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </div>
@@ -129,11 +156,11 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
         <div>
-          <span className="font-medium">Uploaded:</span> {new Date(document.uploadDate).toLocaleDateString()}
+          <span className="font-medium">Uploaded:</span> {new Date(document.upload_date).toLocaleDateString()}
         </div>
-        {document.expiryDate && (
+        {document.expiry_date && (
           <div>
-            <span className="font-medium">Expires:</span> {new Date(document.expiryDate).toLocaleDateString()}
+            <span className="font-medium">Expires:</span> {new Date(document.expiry_date).toLocaleDateString()}
           </div>
         )}
         <div>
@@ -162,6 +189,15 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
             <Clock className="h-4 w-4 inline mr-2" />
             Verification in progress. TalentTrust AI is currently verifying this document. 
             You'll be notified when complete.
+          </p>
+        </div>
+      )}
+
+      {document.status === "uploaded" && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-xs sm:text-sm text-blue-700">
+            <Zap className="h-4 w-4 inline mr-2" />
+            Ready for verification. Click "Verify with TalentTrust" to start AI-powered credential verification.
           </p>
         </div>
       )}

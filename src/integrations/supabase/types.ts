@@ -9,7 +9,333 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      documents: {
+        Row: {
+          created_at: string
+          expiry_date: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          institution_id: string | null
+          issuer: string
+          metadata: Json | null
+          name: string
+          privacy: string
+          status: string
+          type: string
+          updated_at: string
+          upload_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expiry_date?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          institution_id?: string | null
+          issuer: string
+          metadata?: Json | null
+          name: string
+          privacy?: string
+          status?: string
+          type: string
+          updated_at?: string
+          upload_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expiry_date?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          institution_id?: string | null
+          issuer?: string
+          metadata?: Json | null
+          name?: string
+          privacy?: string
+          status?: string
+          type?: string
+          updated_at?: string
+          upload_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      institutions: {
+        Row: {
+          api_key_required: boolean | null
+          country: string | null
+          created_at: string
+          id: string
+          name: string
+          type: string
+          updated_at: string
+          verification_endpoint: string | null
+        }
+        Insert: {
+          api_key_required?: boolean | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          type: string
+          updated_at?: string
+          verification_endpoint?: string | null
+        }
+        Update: {
+          api_key_required?: boolean | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string
+          verification_endpoint?: string | null
+        }
+        Relationships: []
+      }
+      references: {
+        Row: {
+          company: string | null
+          created_at: string
+          document_id: string | null
+          id: string
+          position: string | null
+          reference_email: string | null
+          reference_form_completed: boolean | null
+          reference_form_sent: boolean | null
+          reference_name: string
+          reference_phone: string | null
+          reference_response: Json | null
+          reference_score: number | null
+          relationship: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          position?: string | null
+          reference_email?: string | null
+          reference_form_completed?: boolean | null
+          reference_form_sent?: boolean | null
+          reference_name: string
+          reference_phone?: string | null
+          reference_response?: Json | null
+          reference_score?: number | null
+          relationship?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          position?: string | null
+          reference_email?: string | null
+          reference_form_completed?: boolean | null
+          reference_form_sent?: boolean | null
+          reference_name?: string
+          reference_phone?: string | null
+          reference_response?: Json | null
+          reference_score?: number | null
+          relationship?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "references_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "references_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          auth_id: string
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_type: string
+        }
+        Insert: {
+          auth_id: string
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_type?: string
+        }
+        Update: {
+          auth_id?: string
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
+      verification_requests: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          document_id: string
+          id: string
+          metadata: Json | null
+          priority: number | null
+          request_type: string
+          requested_at: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          document_id: string
+          id?: string
+          metadata?: Json | null
+          priority?: number | null
+          request_type: string
+          requested_at?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          document_id?: string
+          id?: string
+          metadata?: Json | null
+          priority?: number | null
+          request_type?: string
+          requested_at?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_results: {
+        Row: {
+          ai_analysis: Json | null
+          confidence_level: string | null
+          created_at: string
+          document_id: string
+          fraud_indicators: Json | null
+          id: string
+          institution_response: Json | null
+          manual_review_notes: string | null
+          updated_at: string
+          verification_request_id: string
+          verification_score: number | null
+          verified_at: string
+          verifier_id: string | null
+        }
+        Insert: {
+          ai_analysis?: Json | null
+          confidence_level?: string | null
+          created_at?: string
+          document_id: string
+          fraud_indicators?: Json | null
+          id?: string
+          institution_response?: Json | null
+          manual_review_notes?: string | null
+          updated_at?: string
+          verification_request_id: string
+          verification_score?: number | null
+          verified_at?: string
+          verifier_id?: string | null
+        }
+        Update: {
+          ai_analysis?: Json | null
+          confidence_level?: string | null
+          created_at?: string
+          document_id?: string
+          fraud_indicators?: Json | null
+          id?: string
+          institution_response?: Json | null
+          manual_review_notes?: string | null
+          updated_at?: string
+          verification_request_id?: string
+          verification_score?: number | null
+          verified_at?: string
+          verifier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_results_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_results_verification_request_id_fkey"
+            columns: ["verification_request_id"]
+            isOneToOne: false
+            referencedRelation: "verification_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

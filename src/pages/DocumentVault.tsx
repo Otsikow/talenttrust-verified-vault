@@ -4,75 +4,14 @@ import DocumentVaultHeader from "@/components/vault/DocumentVaultHeader";
 import DocumentStats from "@/components/vault/DocumentStats";
 import DocumentControls from "@/components/vault/DocumentControls";
 import DocumentList from "@/components/vault/DocumentList";
+import { useDocuments } from "@/hooks/useDocuments";
 
 const DocumentVault = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
 
-  // Mock documents data
-  const [documents] = useState([
-    {
-      id: 1,
-      name: "Bachelor's Degree - Computer Science",
-      type: "degree",
-      issuer: "Stanford University",
-      uploadDate: "2024-01-15",
-      expiryDate: null,
-      status: "verified",
-      verificationScore: 98,
-      privacy: "private",
-      fileUrl: "/mock/degree.pdf"
-    },
-    {
-      id: 2,
-      name: "AWS Cloud Practitioner Certificate",
-      type: "certificate",
-      issuer: "Amazon Web Services",
-      uploadDate: "2024-02-10",
-      expiryDate: "2027-02-10",
-      status: "verified",
-      verificationScore: 95,
-      privacy: "shared",
-      fileUrl: "/mock/aws-cert.pdf"
-    },
-    {
-      id: 3,
-      name: "Employment Reference - Google",
-      type: "reference",
-      issuer: "Google Inc.",
-      uploadDate: "2024-02-20",
-      expiryDate: null,
-      status: "pending",
-      verificationScore: null,
-      privacy: "private",
-      fileUrl: "/mock/reference.pdf"
-    },
-    {
-      id: 4,
-      name: "Portfolio - Mobile App Project",
-      type: "work_sample",
-      issuer: "Self",
-      uploadDate: "2024-02-25",
-      expiryDate: null,
-      status: "verified",
-      verificationScore: 92,
-      privacy: "shared",
-      fileUrl: "/mock/portfolio.pdf"
-    },
-    {
-      id: 5,
-      name: "Driver's License",
-      type: "license",
-      issuer: "California DMV",
-      uploadDate: "2024-01-30",
-      expiryDate: "2028-01-30",
-      status: "failed",
-      verificationScore: null,
-      privacy: "private",
-      fileUrl: "/mock/license.pdf"
-    }
-  ]);
+  const { documents, loading } = useDocuments();
 
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -82,6 +21,22 @@ const DocumentVault = () => {
     
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+        <DocumentVaultHeader />
+        <div className="container mx-auto px-4 py-4 sm:py-6 lg:py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading your documents...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">

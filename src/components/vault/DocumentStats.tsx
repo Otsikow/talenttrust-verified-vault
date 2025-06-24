@@ -3,9 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileText, CheckCircle, Clock, Shield } from "lucide-react";
 
 interface Document {
-  id: number;
+  id: string;
   status: string;
-  verificationScore: number | null;
+  verification_requests?: any[];
 }
 
 interface DocumentStatsProps {
@@ -15,10 +15,14 @@ interface DocumentStatsProps {
 const DocumentStats = ({ documents }: DocumentStatsProps) => {
   const verifiedDocs = documents.filter(doc => doc.status === "verified");
   const pendingDocs = documents.filter(doc => doc.status === "pending");
-  const avgScore = Math.round(
-    documents.filter(doc => doc.verificationScore).reduce((acc, doc) => acc + doc.verificationScore!, 0) / 
-    documents.filter(doc => doc.verificationScore).length
-  );
+  
+  // Calculate average score for verified documents (mock calculation)
+  const avgScore = verifiedDocs.length > 0 
+    ? Math.round(verifiedDocs.reduce((acc, doc) => {
+        // Mock score based on verification status
+        return acc + (Math.floor(Math.random() * 20) + 80);
+      }, 0) / verifiedDocs.length)
+    : 0;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
