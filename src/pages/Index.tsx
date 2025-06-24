@@ -231,8 +231,7 @@ const Index = () => {
             <p className="text-gray-400">© 2024 TrustTalent. Powered by TalentTrust Engine.</p>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
     </div>
   );
 };
