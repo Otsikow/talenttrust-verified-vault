@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -13,7 +12,8 @@ import {
   Zap
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useDocuments, Document } from "@/hooks/useDocuments";
+import { useDocuments } from "@/hooks/useDocuments";
+import { Document } from "@/types/documents";
 
 interface DocumentCardProps {
   document: Document;

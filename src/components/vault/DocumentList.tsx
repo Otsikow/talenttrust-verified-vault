@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from "@/components/ui/button";
 import { FileText, Upload } from "lucide-react";
 import DocumentCard from "./DocumentCard";
-import { Document } from "@/hooks/useDocuments";
+import { Document } from "@/types/documents";
 
 interface DocumentListProps {
   documents: Document[];
