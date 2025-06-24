@@ -55,9 +55,6 @@ export const useDocuments = () => {
       await documentService.uploadDocument(file, documentData, currentUser);
       await fetchDocuments();
       
-      // Force refresh of user profile to update counts
-      await userService.refreshUserProfile();
-      
       toast({
         title: "Success",
         description: "Document uploaded successfully",
@@ -78,9 +75,6 @@ export const useDocuments = () => {
       await documentService.requestVerification(documentId, requestType, currentUser);
       await fetchDocuments();
       
-      // Force refresh of user profile to update verification counts
-      await userService.refreshUserProfile();
-      
       toast({
         title: "Verification Started",
         description: "Your document has been sent to TalentTrust AI for verification. You'll be notified when complete.",
@@ -100,9 +94,6 @@ export const useDocuments = () => {
     try {
       await documentService.deleteDocument(documentId);
       await fetchDocuments();
-      
-      // Force refresh of user profile to update counts
-      await userService.refreshUserProfile();
       
       toast({
         title: "Success",

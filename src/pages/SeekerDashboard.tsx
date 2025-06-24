@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,9 +19,16 @@ import MobileNavigation from "@/components/navigation/MobileNavigation";
 
 const SeekerDashboard = () => {
   const navigate = useNavigate();
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, refreshProfile } = useAuth();
   const [displayName, setDisplayName] = useState("Your Name");
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+
+  useEffect(() => {
+    // Refresh profile data when component mounts to get latest document counts
+    if (user) {
+      refreshProfile();
+    }
+  }, [user, refreshProfile]);
 
   useEffect(() => {
     if (userProfile && user) {

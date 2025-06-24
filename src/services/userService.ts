@@ -28,5 +28,18 @@ export const userService = {
     }
 
     return profile;
+  },
+
+  async refreshUserProfile() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data: profile } = await supabase
+      .from('users')
+      .select('*')
+      .eq('auth_id', user.id)
+      .single();
+
+    return profile;
   }
 };
