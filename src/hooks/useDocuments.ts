@@ -88,9 +88,14 @@ export const useDocuments = () => {
           institutions (name, type),
           verification_requests (
             id,
+            document_id,
+            user_id,
             status,
             request_type,
-            requested_at
+            priority,
+            requested_at,
+            started_at,
+            completed_at
           )
         `)
         .order('created_at', { ascending: false });
@@ -102,7 +107,12 @@ export const useDocuments = () => {
         ...doc,
         type: doc.type as Document['type'],
         status: doc.status as Document['status'],
-        privacy: doc.privacy as Document['privacy']
+        privacy: doc.privacy as Document['privacy'],
+        verification_requests: doc.verification_requests?.map((vr: any) => ({
+          ...vr,
+          request_type: vr.request_type as VerificationRequest['request_type'],
+          status: vr.status as VerificationRequest['status']
+        })) || []
       }));
       
       setDocuments(transformedDocuments);
