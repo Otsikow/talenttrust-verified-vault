@@ -56,7 +56,10 @@ class ProfileService {
       
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      // Use the correct path structure that matches our RLS policy
+      const filePath = `${userId}/${fileName}`;
+
+      console.log('Uploading to path:', filePath);
 
       // Upload the file to Supabase Storage
       const { error: uploadError } = await supabase.storage

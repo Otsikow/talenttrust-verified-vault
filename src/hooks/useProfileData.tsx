@@ -69,8 +69,9 @@ export const useProfileData = () => {
       totalDocuments: profile.total_documents || 0
     });
 
+    // Set avatar URL using the correct path structure
     if (user?.id) {
-      setAvatarUrl(`https://mjaqvbuhnhatofwkgako.supabase.co/storage/v1/object/public/avatars/avatars/${user.id}.jpg`);
+      setAvatarUrl(`https://mjaqvbuhnhatofwkgako.supabase.co/storage/v1/object/public/avatars/${user.id}/${user.id}.jpg`);
     }
     
     setProfileError(null);
