@@ -10,7 +10,7 @@ import {
   MapPin, 
   Building, 
   Clock, 
-  Pound, 
+  PoundSterling, 
   Shield, 
   BookmarkPlus,
   Heart,
@@ -238,7 +238,7 @@ const FindJobs = () => {
                     <div className="flex items-center space-x-4 mb-4">
                       <Badge variant="outline">{job.type}</Badge>
                       <div className="flex items-center space-x-1 text-green-600 font-medium">
-                        <Pound className="h-4 w-4" />
+                        <PoundSterling className="h-4 w-4" />
                         <span>{job.salary}</span>
                       </div>
                     </div>

@@ -13,7 +13,7 @@ import {
   MessageSquare,
   Star,
   Trash2,
-  MarkAsUnread
+  Mail
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -230,7 +230,7 @@ const Notifications = () => {
                             <Button variant="ghost" size="sm">
                               {notification.read ? (
                                 <>
-                                  <MarkAsUnread className="h-4 w-4 mr-2" />
+                                  <Mail className="h-4 w-4 mr-2" />
                                   Mark Unread
                                 </>
                               ) : (
