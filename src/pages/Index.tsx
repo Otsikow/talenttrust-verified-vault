@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, CheckCircle, Users, FileText, Briefcase, Search } from "lucide-react";
+import { Shield, CheckCircle, Users, FileText, Briefcase, Search, GraduationCap } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -38,8 +38,8 @@ const Index = () => {
             <span className="block text-blue-600 mt-2">The Future of Talent Verification</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            TrustTalent revolutionizes hiring with AI-powered verification of degrees, certificates, 
-            references, and work samples. Build trust, reduce fraud, hire with confidence.
+            TrustTalent revolutionizes hiring and admissions with AI-powered verification of degrees, certificates, 
+            references, and work samples. Build trust, reduce fraud, make confident decisions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=seeker")}>
@@ -49,6 +49,10 @@ const Index = () => {
             <Button size="lg" variant="outline" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=employer")}>
               <Briefcase className="mr-2 h-5 w-5" />
               I'm Hiring Talent
+            </Button>
+            <Button size="lg" variant="secondary" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=university")}>
+              <GraduationCap className="mr-2 h-5 w-5" />
+              Admissions Office
             </Button>
           </div>
         </div>
@@ -81,9 +85,9 @@ const Index = () => {
           <Card className="border-purple-100 hover:border-purple-200 transition-colors">
             <CardHeader>
               <CheckCircle className="h-12 w-12 text-purple-600 mb-4" />
-              <CardTitle>Trusted by Top Employers</CardTitle>
+              <CardTitle>Trusted by Top Organizations</CardTitle>
               <CardDescription>
-                Join thousands of companies using verified talent data to make better hiring decisions
+                Join thousands of employers and universities using verified credential data to make better decisions
               </CardDescription>
             </CardHeader>
           </Card>
@@ -94,7 +98,7 @@ const Index = () => {
       <section className="bg-white py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">How TrustTalent Works</h2>
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-3 gap-12">
             <div>
               <h3 className="text-2xl font-semibold mb-6 text-blue-600">For Job Seekers</h3>
               <div className="space-y-4">
@@ -160,6 +164,39 @@ const Index = () => {
                 </div>
               </div>
             </div>
+
+            <div>
+              <h3 className="text-2xl font-semibold mb-6 text-purple-600">For Universities</h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-purple-600 font-semibold">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Bulk Verification</h4>
+                    <p className="text-gray-600">Process multiple applicant credentials simultaneously</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-purple-600 font-semibold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Fraud Detection</h4>
+                    <p className="text-gray-600">Identify forged documents and prevent admission fraud</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-purple-600 font-semibold">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Streamline Admissions</h4>
+                    <p className="text-gray-600">Make faster, more confident admission decisions</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -167,14 +204,17 @@ const Index = () => {
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-blue-600 to-green-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Hiring?</h2>
-          <p className="text-xl mb-8 opacity-90">Join the verified talent revolution today</p>
+          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Process?</h2>
+          <p className="text-xl mb-8 opacity-90">Join the verified credential revolution today</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" onClick={() => navigate("/register?role=seeker")}>
               Start as Job Seeker
             </Button>
             <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600" onClick={() => navigate("/register?role=employer")}>
               Start as Employer
+            </Button>
+            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-purple-600" onClick={() => navigate("/register?role=university")}>
+              Start as University
             </Button>
           </div>
         </div>
@@ -191,7 +231,8 @@ const Index = () => {
             <p className="text-gray-400">© 2024 TrustTalent. Powered by TalentTrust Engine.</p>
           </div>
         </div>
-      </footer>
+      </div>
+    </footer>
     </div>
   );
 };
