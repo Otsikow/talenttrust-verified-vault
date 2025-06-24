@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
@@ -111,11 +110,6 @@ const Messages = () => {
         ? { ...conv, lastMessage: messageText, timestamp: "Just now" }
         : conv
     ));
-    
-    toast({
-      title: "Message sent",
-      description: "Your message has been sent successfully.",
-    });
   };
 
   const handleToggleFavorite = () => {
