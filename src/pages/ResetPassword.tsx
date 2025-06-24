@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, ArrowLeft, AlertTriangle, CheckCircle } from "lucide-react";
+import { ArrowLeft, AlertTriangle, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
@@ -144,7 +143,7 @@ const ResetPassword = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <div className="flex items-center justify-center space-x-2 mb-4">
-                <Shield className="h-8 w-8 text-blue-600" />
+                <img src="/lovable-uploads/353f8749-04ef-4886-91d8-8fd0ad698158.png" alt="TrustTalent Shield" className="h-8 w-8" />
                 <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h1>
@@ -207,7 +206,7 @@ const ResetPassword = () => {
                 {/* Password Requirements */}
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
-                    <Shield className="h-4 w-4 text-blue-600" />
+                    <img src="/lovable-uploads/353f8749-04ef-4886-91d8-8fd0ad698158.png" alt="TrustTalent Shield" className="h-4 w-4" />
                     <p className="text-sm text-blue-800 font-medium">Password Requirements</p>
                   </div>
                   <ul className="text-xs text-blue-600 space-y-1">

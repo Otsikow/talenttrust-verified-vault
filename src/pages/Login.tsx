@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, ArrowLeft, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -119,7 +118,7 @@ const Login = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <Shield className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
+          <img src="/lovable-uploads/353f8749-04ef-4886-91d8-8fd0ad698158.png" alt="TrustTalent" className="h-8 w-8 animate-spin mx-auto mb-4" />
           <p>Loading...</p>
         </div>
       </div>
@@ -147,7 +146,7 @@ const Login = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <div className="flex items-center justify-center space-x-2 mb-4">
-                <Shield className="h-8 w-8 text-blue-600" />
+                <img src="/lovable-uploads/353f8749-04ef-4886-91d8-8fd0ad698158.png" alt="TrustTalent Shield" className="h-8 w-8" />
                 <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
@@ -277,7 +276,7 @@ const Login = () => {
                 {/* Security Notice */}
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
-                    <Shield className="h-4 w-4 text-blue-600" />
+                    <img src="/lovable-uploads/353f8749-04ef-4886-91d8-8fd0ad698158.png" alt="TrustTalent Shield" className="h-4 w-4" />
                     <p className="text-sm text-blue-800 font-medium">Secure Login</p>
                   </div>
                   <p className="text-xs text-blue-600">
