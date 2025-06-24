@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import SeekerDashboard from "./pages/SeekerDashboard";
 import EmployerDashboard from "./pages/EmployerDashboard";
+import UniversityDashboard from "./pages/UniversityDashboard";
 import DocumentVault from "./pages/DocumentVault";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard/seeker" element={<SeekerDashboard />} />
           <Route path="/dashboard/employer" element={<EmployerDashboard />} />
+          <Route path="/dashboard/university" element={<UniversityDashboard />} />
           <Route path="/vault" element={<DocumentVault />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

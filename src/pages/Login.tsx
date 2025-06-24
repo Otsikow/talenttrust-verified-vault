@@ -34,6 +34,8 @@ const Login = () => {
         navigate("/dashboard/admin");
       } else if (email.includes("employer") || email.includes("company")) {
         navigate("/dashboard/employer");
+      } else if (email.includes("university") || email.includes("edu") || email.includes("admissions")) {
+        navigate("/dashboard/university");
       } else {
         navigate("/dashboard/seeker");
       }
@@ -120,8 +122,8 @@ const Login = () => {
               <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm text-blue-800 font-medium mb-2">Demo Mode:</p>
                 <p className="text-xs text-blue-600">
-                  Use any email containing "admin", "employer", or "company" to see different dashboards, 
-                  or use any other email for the job seeker experience.
+                  Use emails containing "admin", "employer"/"company", "university"/"edu"/"admissions" 
+                  to see different dashboards, or any other email for job seeker experience.
                 </p>
               </div>
             </CardContent>

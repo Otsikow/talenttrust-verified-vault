@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Briefcase } from "lucide-react";
+import { Shield, Users, Briefcase, GraduationCap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
@@ -22,6 +22,8 @@ const Register = () => {
     confirmPassword: "",
     fullName: "",
     company: "",
+    universityName: "",
+    accreditationId: "",
     phone: ""
   });
 
@@ -49,6 +51,8 @@ const Register = () => {
         navigate("/dashboard/seeker");
       } else if (activeTab === "employer") {
         navigate("/dashboard/employer");
+      } else if (activeTab === "university") {
+        navigate("/dashboard/university");
       } else {
         navigate("/dashboard/admin");
       }
@@ -84,17 +88,21 @@ const Register = () => {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="seeker" className="text-xs">
-                    <Users className="h-4 w-4 mr-1" />
-                    Job Seeker
+                    <Users className="h-3 w-3 mr-1" />
+                    Seeker
                   </TabsTrigger>
                   <TabsTrigger value="employer" className="text-xs">
-                    <Briefcase className="h-4 w-4 mr-1" />
+                    <Briefcase className="h-3 w-3 mr-1" />
                     Employer
                   </TabsTrigger>
+                  <TabsTrigger value="university" className="text-xs">
+                    <GraduationCap className="h-3 w-3 mr-1" />
+                    University
+                  </TabsTrigger>
                   <TabsTrigger value="admin" className="text-xs">
-                    <Shield className="h-4 w-4 mr-1" />
+                    <Shield className="h-3 w-3 mr-1" />
                     Admin
                   </TabsTrigger>
                 </TabsList>
@@ -133,6 +141,29 @@ const Register = () => {
                         value={formData.company}
                         onChange={handleInputChange}
                         required={activeTab === "employer"}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="university" className="space-y-4 m-0">
+                    <div className="space-y-2">
+                      <Label htmlFor="universityName">University Name</Label>
+                      <Input
+                        id="universityName"
+                        name="universityName"
+                        value={formData.universityName}
+                        onChange={handleInputChange}
+                        required={activeTab === "university"}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="accreditationId">Accreditation ID (Optional)</Label>
+                      <Input
+                        id="accreditationId"
+                        name="accreditationId"
+                        value={formData.accreditationId}
+                        onChange={handleInputChange}
+                        placeholder="e.g., WASC, ABET, etc."
                       />
                     </div>
                   </TabsContent>
