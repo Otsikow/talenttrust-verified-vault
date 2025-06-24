@@ -48,6 +48,10 @@ export const useDocuments = () => {
 
   const uploadDocument = async (file: File, documentData: Partial<Document>) => {
     try {
+      if (!currentUser) {
+        throw new Error('User not authenticated');
+      }
+      
       await documentService.uploadDocument(file, documentData, currentUser);
       await fetchDocuments();
       toast({

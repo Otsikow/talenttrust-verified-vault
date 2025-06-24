@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { securityService } from './securityService';
 import { Document, VerificationRequest } from '@/types/documents';
@@ -8,13 +7,22 @@ export const documentService = {
     const { data: user } = await supabase.auth.getUser();
     if (!user.user) return [];
 
+    // Get user record from users table
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('id')
+      .eq('auth_id', user.user.id)
+      .single();
+
     // Log access to documents (with error handling)
     try {
-      await securityService.logAuditEvent({
-        user_id: user.user.id,
-        action: 'view_documents',
-        resource_type: 'documents'
-      });
+      if (userRecord) {
+        await securityService.logAuditEvent({
+          user_id: userRecord.id, // Use users table ID, not auth ID
+          action: 'view_documents',
+          resource_type: 'documents'
+        });
+      }
     } catch (error) {
       console.error('Failed to log audit event:', error);
       // Continue execution - audit logging shouldn't block main functionality
@@ -105,7 +113,7 @@ export const documentService = {
     const { data, error } = await supabase
       .from('documents')
       .insert({
-        user_id: currentUser.id,
+        user_id: currentUser.id, // Use users table ID
         name: encryptedName,
         type: dbDocumentType,
         issuer: encryptedIssuer,
@@ -129,7 +137,7 @@ export const documentService = {
     // Log document upload (with error handling)
     try {
       await securityService.logAuditEvent({
-        user_id: currentUser.id,
+        user_id: currentUser.id, // Use users table ID
         action: 'document_upload',
         resource_type: 'document',
         resource_id: data.id,
@@ -156,7 +164,7 @@ export const documentService = {
       .from('verification_requests')
       .insert({
         document_id: documentId,
-        user_id: currentUser.id,
+        user_id: currentUser.id, // Use users table ID
         request_type: requestType,
         status: 'pending',
         priority: 1
@@ -174,7 +182,7 @@ export const documentService = {
     // Log verification request (with error handling)
     try {
       await securityService.logAuditEvent({
-        user_id: currentUser.id,
+        user_id: currentUser.id, // Use users table ID
         action: 'verification_request',
         resource_type: 'document',
         resource_id: documentId,
@@ -203,13 +211,22 @@ export const documentService = {
     try {
       const { data: user } = await supabase.auth.getUser();
       if (user.user) {
-        await securityService.logAuditEvent({
-          user_id: user.user.id,
-          action: 'document_delete',
-          resource_type: 'document',
-          resource_id: documentId,
-          details: { permanent_deletion: true }
-        });
+        // Get user record from users table
+        const { data: userRecord } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.user.id)
+          .single();
+
+        if (userRecord) {
+          await securityService.logAuditEvent({
+            user_id: userRecord.id, // Use users table ID
+            action: 'document_delete',
+            resource_type: 'document',
+            resource_id: documentId,
+            details: { permanent_deletion: true }
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to log audit event:', error);

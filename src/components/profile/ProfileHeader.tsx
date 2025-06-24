@@ -49,25 +49,56 @@ const ProfileHeader = ({
 }: ProfileHeaderProps) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSave = () => {
-    toast({
-      title: "Success",
-      description: "Profile updated successfully",
-    });
     onSave();
   };
 
   const handleAvatarClick = () => {
-    if (isEditing && fileInputRef.current) {
+    if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && onAvatarChange) {
-      onAvatarChange(file);
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select an image file",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setIsUploading(true);
+      try {
+        if (onAvatarChange) {
+          await onAvatarChange(file);
+        }
+      } catch (error) {
+        console.error('Avatar upload error:', error);
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload avatar. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -99,7 +130,7 @@ const ProfileHeader = ({
               size="sm" 
               className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
               onClick={handleAvatarClick}
-              disabled={!isEditing}
+              disabled={isUploading}
             >
               <Camera className="h-4 w-4" />
             </Button>
