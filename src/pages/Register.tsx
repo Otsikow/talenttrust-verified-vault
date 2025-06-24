@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Briefcase, GraduationCap, ArrowLeft } from "lucide-react";
+import { Users, Briefcase, GraduationCap, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
@@ -84,7 +85,7 @@ const Register = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Shield className="h-8 w-8 text-blue-600" />
+            <img src="/lovable-uploads/50f771b2-c841-4b41-8a90-1fa61ce4d7f9.png" alt="TrustTalent Shield" className="h-8 w-8" />
             <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Your Account</h1>
@@ -114,7 +115,7 @@ const Register = () => {
                     University
                   </TabsTrigger>
                   <TabsTrigger value="admin" className="text-xs">
-                    <Shield className="h-3 w-3 mr-1" />
+                    <img src="/lovable-uploads/50f771b2-c841-4b41-8a90-1fa61ce4d7f9.png" alt="TrustTalent" className="h-3 w-3 mr-1" />
                     Admin
                   </TabsTrigger>
                 </TabsList>
