@@ -23,7 +23,7 @@ const EmployerDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Mock data
+  // Mock data with British terminology
   const hiringStats = {
     activeJobs: 12,
     totalApplicants: 248,
@@ -45,12 +45,12 @@ const EmployerDashboard = () => {
     { id: 4, name: "David Kim", role: "DevOps Engineer", verificationScore: 91, documents: 5, match: 87 }
   ];
 
-  const getStatusColor = (status: string) => {
+  const getStatusColour = (status: string) => {
     switch (status) {
       case "active": return "text-green-600 bg-green-100";
       case "paused": return "text-yellow-600 bg-yellow-100";
       case "closed": return "text-red-600 bg-red-100";
-      default: return "text-gray-600 bg-gray-100";
+      default: return "text-grey-600 bg-grey-100";
     }
   };
 
@@ -62,20 +62,20 @@ const EmployerDashboard = () => {
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <Shield className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">TrustTalent</span>
+              <span className="text-xl font-bold text-grey-900">TrustTalent</span>
             </div>
             <nav className="hidden md:flex space-x-6">
               <Button variant="ghost" className="font-medium">Dashboard</Button>
               <Button variant="ghost">Manage Jobs</Button>
               <Button variant="ghost">Candidates</Button>
-              <Button variant="ghost">Messages</Button>
+              <Button variant="ghost" onClick={() => navigate("/messages")}>Messages</Button>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
               <Bell className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
               <User className="h-4 w-4" />
             </Button>
           </div>
@@ -85,8 +85,8 @@ const EmployerDashboard = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, TechCorp!</h1>
-          <p className="text-gray-600">You have {hiringStats.verifiedApplicants} verified candidates across {hiringStats.activeJobs} active jobs</p>
+          <h1 className="text-3xl font-bold text-grey-900 mb-2">Welcome back, TechCorp!</h1>
+          <p className="text-grey-600">You have {hiringStats.verifiedApplicants} verified candidates across {hiringStats.activeJobs} active jobs</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -169,7 +169,7 @@ const EmployerDashboard = () => {
                     <Calendar className="h-8 w-8" />
                     <span>Schedule Interview</span>
                   </Button>
-                  <Button className="h-24 flex-col space-y-2" variant="outline">
+                  <Button className="h-24 flex-col space-y-2" variant="outline" onClick={() => navigate("/messages")}>
                     <MessageSquare className="h-8 w-8" />
                     <span>Message Candidates</span>
                   </Button>
@@ -186,23 +186,23 @@ const EmployerDashboard = () => {
               <CardContent>
                 <div className="space-y-4">
                   {topApplicants.map((candidate) => (
-                    <div key={candidate.id} className="flex items-center justify-between p-4 border rounded-lg hover:border-blue-200 transition-colors">
+                    <div key={candidate.id} className="flex items-center justify-between p-4 border rounded-lg hover:border-blue-200 transition-colours">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
                           {candidate.name.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
                           <h4 className="font-semibold">{candidate.name}</h4>
-                          <p className="text-sm text-gray-600">{candidate.role}</p>
+                          <p className="text-sm text-grey-600">{candidate.role}</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
-                        <div className="text-center">
+                        <div className="text-centre">
                           <div className="flex items-center space-x-1">
                             <Shield className="h-4 w-4 text-green-600" />
                             <span className="font-semibold text-green-600">{candidate.verificationScore}%</span>
                           </div>
-                          <p className="text-xs text-gray-600">{candidate.documents} docs verified</p>
+                          <p className="text-xs text-grey-600">{candidate.documents} docs verified</p>
                         </div>
                         <Badge variant="outline">
                           {candidate.match}% match
@@ -236,23 +236,23 @@ const EmployerDashboard = () => {
                     <div key={job.id} className="border rounded-lg p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{job.title}</h3>
-                          <p className="text-gray-600">Posted {job.posted}</p>
+                          <h3 className="text-lg font-semibold text-grey-900">{job.title}</h3>
+                          <p className="text-grey-600">Posted {job.posted}</p>
                         </div>
-                        <Badge className={getStatusColor(job.status)}>
+                        <Badge className={getStatusColour(job.status)}>
                           {job.status}
                         </Badge>
                       </div>
                       <div className="grid md:grid-cols-3 gap-4 mb-4">
-                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <p className="text-2xl font-bold text-gray-900">{job.applicants}</p>
-                          <p className="text-sm text-gray-600">Total Applicants</p>
+                        <div className="text-centre p-3 bg-grey-50 rounded-lg">
+                          <p className="text-2xl font-bold text-grey-900">{job.applicants}</p>
+                          <p className="text-sm text-grey-600">Total Applicants</p>
                         </div>
-                        <div className="text-center p-3 bg-green-50 rounded-lg">
+                        <div className="text-centre p-3 bg-green-50 rounded-lg">
                           <p className="text-2xl font-bold text-green-700">{job.verified}</p>
                           <p className="text-sm text-green-600">Verified Candidates</p>
                         </div>
-                        <div className="text-center p-3 bg-blue-50 rounded-lg">
+                        <div className="text-centre p-3 bg-blue-50 rounded-lg">
                           <p className="text-2xl font-bold text-blue-700">{Math.round((job.verified / job.applicants) * 100)}%</p>
                           <p className="text-sm text-blue-600">Verification Rate</p>
                         </div>
@@ -301,7 +301,7 @@ const EmployerDashboard = () => {
                           </div>
                           <div>
                             <h4 className="font-semibold text-lg">{candidate.name}</h4>
-                            <p className="text-gray-600">Applied for {candidate.role}</p>
+                            <p className="text-grey-600">Applied for {candidate.role}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -312,24 +312,24 @@ const EmployerDashboard = () => {
                           <Badge variant="outline">{candidate.match}% Match</Badge>
                         </div>
                       </div>
-                      <div className="grid md:grid-cols-3 gap-4 mb-4 text-center">
+                      <div className="grid md:grid-cols-3 gap-4 mb-4 text-centre">
                         <div>
-                          <p className="text-sm text-gray-600">Documents Verified</p>
+                          <p className="text-sm text-grey-600">Documents Verified</p>
                           <p className="text-xl font-semibold">{candidate.documents}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600">Verification Score</p>
+                          <p className="text-sm text-grey-600">Verification Score</p>
                           <p className="text-xl font-semibold text-green-600">{candidate.verificationScore}%</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600">Job Match</p>
+                          <p className="text-sm text-grey-600">Job Match</p>
                           <p className="text-xl font-semibold text-blue-600">{candidate.match}%</p>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
                         <Button variant="outline">View Full Profile</Button>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => navigate("/messages")}>
                             <MessageSquare className="h-4 w-4 mr-2" />
                             Message
                           </Button>
@@ -353,10 +353,10 @@ const EmployerDashboard = () => {
                 <CardDescription>Manage your upcoming interviews</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No interviews scheduled</h3>
-                  <p className="text-gray-600 mb-4">Schedule interviews with qualified candidates to see them here</p>
+                <div className="text-centre py-12">
+                  <Calendar className="h-16 w-16 text-grey-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-grey-900 mb-2">No interviews scheduled</h3>
+                  <p className="text-grey-600 mb-4">Schedule interviews with qualified candidates to see them here</p>
                   <Button>
                     Browse Candidates
                   </Button>
