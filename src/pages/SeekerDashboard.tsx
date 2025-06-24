@@ -1,46 +1,83 @@
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   FileText, 
-  Briefcase, 
   Shield, 
+  Briefcase, 
+  MessageSquare, 
+  Star,
   TrendingUp,
+  Calendar,
   Bell,
-  User,
-  BookOpen,
-  Award,
-  Clock
+  User
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 
 const SeekerDashboard = () => {
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
-  const [userName, setUserName] = useState("User");
+  const [displayName, setDisplayName] = useState("Your Name");
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 
   useEffect(() => {
-    if (userProfile) {
-      const fullName = userProfile.full_name;
+    if (userProfile && user) {
+      // Parse full name or use email
+      const fullName = userProfile.full_name?.trim();
       if (fullName) {
-        const firstName = fullName.split(' ')[0];
-        setUserName(firstName);
-      } else if (userProfile.email) {
-        setUserName(userProfile.email.split('@')[0]);
+        setDisplayName(fullName);
+      } else if (user.email) {
+        setDisplayName(user.email.split('@')[0]);
       }
-    } else if (user?.email) {
-      setUserName(user.email.split('@')[0]);
+
+      // Set avatar URL if exists
+      if (user.id) {
+        setAvatarUrl(`https://mjaqvbuhnhatofwkgako.supabase.co/storage/v1/object/public/avatars/avatars/${user.id}.jpg`);
+      }
     }
   }, [userProfile, user]);
+
+  // Generate initials from display name
+  const getInitials = () => {
+    if (userProfile?.full_name) {
+      const nameParts = userProfile.full_name.split(' ');
+      const firstInitial = nameParts[0]?.[0] || '';
+      const lastInitial = nameParts[1]?.[0] || '';
+      return `${firstInitial}${lastInitial}`.toUpperCase();
+    }
+    return displayName?.slice(0, 2).toUpperCase() || 'U';
+  };
 
   // Show loading or redirect if not authenticated
   if (!user) {
     navigate("/login");
     return null;
   }
+
+  const stats = [
+    { label: "Documents Uploaded", value: userProfile?.total_documents || 0, icon: FileText },
+    { label: "Verification Score", value: `${userProfile?.verification_score || 0}%`, icon: Shield },
+    { label: "Applications Sent", value: 12, icon: Briefcase },
+    { label: "Profile Views", value: 48, icon: TrendingUp },
+  ];
+
+  const recentActivity = [
+    { action: "Document verified", item: "University Degree", time: "2 hours ago", status: "success" },
+    { action: "Application sent", item: "Software Engineer at TechCorp", time: "1 day ago", status: "pending" },
+    { action: "Profile updated", item: "Work experience added", time: "2 days ago", status: "info" },
+    { action: "Document uploaded", item: "Professional Certificate", time: "3 days ago", status: "success" },
+  ];
+
+  const quickActions = [
+    { title: "Upload Document", description: "Add new credentials to your vault", icon: FileText, action: () => navigate("/vault") },
+    { title: "Find Jobs", description: "Browse and apply to new opportunities", icon: Briefcase, action: () => navigate("/jobs") },
+    { title: "Update Profile", description: "Keep your information current", icon: User, action: () => navigate("/profile") },
+    { title: "Messages", description: "Check your conversations", icon: MessageSquare, action: () => navigate("/messages") },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -61,177 +98,129 @@ const SeekerDashboard = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
-              <span className="sr-only">Notifications</span>
               <Bell className="h-4 w-4" />
+              <span className="sr-only">Notifications</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
-              <span className="sr-only">Profile</span>
-              <User className="h-4 w-4" />
+            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="flex items-center space-x-2">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={avatarUrl} />
+                <AvatarFallback className="text-xs">
+                  {getInitials()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="hidden md:inline">{displayName}</span>
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {userName}!</h1>
-          <p className="text-gray-600">Here's what's happening with your job search and profile.</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {displayName.split(' ')[0] || displayName}!
+          </h1>
+          <p className="text-gray-600">Here's what's happening with your job search today.</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Profile Completion</CardTitle>
-              <User className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">85%</div>
-              <p className="text-xs text-muted-foreground">+2% from last week</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Job Applications</CardTitle>
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">+3 this week</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Documents Verified</CardTitle>
-              <Shield className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">8/10</div>
-              <p className="text-xs text-muted-foreground">2 pending verification</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Trust Score</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">92%</div>
-              <p className="text-xs text-muted-foreground">Excellent rating</p>
-            </CardContent>
-          </Card>
+        {/* Stats Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {stats.map((stat, index) => (
+            <Card key={index}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  </div>
+                  <stat.icon className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* Main Dashboard Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Recent Activities */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Quick Actions */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activities</CardTitle>
-                <CardDescription>Your latest actions and updates</CardDescription>
+                <CardTitle>Quick Actions</CardTitle>
+                <CardDescription>Get things done faster</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Applied to Software Engineer at TechCorp</p>
-                      <p className="text-xs text-gray-500">2 hours ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Verified AWS Solutions Architect Certificate</p>
-                      <p className="text-xs text-gray-500">1 day ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Updated professional summary</p>
-                      <p className="text-xs text-gray-500">3 days ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Uploaded university transcript</p>
-                      <p className="text-xs text-gray-500">1 week ago</p>
-                    </div>
-                  </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {quickActions.map((action, index) => (
+                    <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow" onClick={action.action}>
+                      <CardContent className="p-4">
+                        <div className="flex items-start space-x-3">
+                          <action.icon className="h-6 w-6 text-blue-600 mt-1" />
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{action.title}</h3>
+                            <p className="text-sm text-gray-600">{action.description}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Quick Actions */}
-          <div className="space-y-6">
+          {/* Recent Activity */}
+          <div>
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>Manage your profile and applications</CardDescription>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>Your latest updates</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Button className="w-full" onClick={() => navigate("/jobs")}>
-                  <Briefcase className="h-4 w-4 mr-2" />
-                  Find New Jobs
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => navigate("/vault")}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Upload Documents
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => navigate("/profile")}>
-                  <User className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Verification Status</CardTitle>
-                <CardDescription>Your document verification progress</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Identity Documents</span>
-                  <Badge className="bg-green-100 text-green-700">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Verified
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Education Certificates</span>
-                  <Badge className="bg-green-100 text-green-700">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Verified
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Professional Licenses</span>
-                  <Badge className="bg-yellow-100 text-yellow-700">
-                    <Clock className="h-3 w-3 mr-1" />
-                    Pending
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Work References</span>
-                  <Badge className="bg-yellow-100 text-yellow-700">
-                    <Clock className="h-3 w-3 mr-1" />
-                    Pending
-                  </Badge>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentActivity.map((activity, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className={`w-2 h-2 rounded-full mt-2 ${
+                        activity.status === 'success' ? 'bg-green-500' :
+                        activity.status === 'pending' ? 'bg-yellow-500' : 'bg-blue-500'
+                      }`} />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">{activity.action}</p>
+                        <p className="text-sm text-gray-600">{activity.item}</p>
+                        <p className="text-xs text-gray-500">{activity.time}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Profile Completion */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Star className="h-5 w-5 text-yellow-500" />
+              <span>Profile Completion</span>
+            </CardTitle>
+            <CardDescription>Complete your profile to get better job matches</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium">Progress</span>
+              <span className="text-sm text-gray-600">75%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+              <div className="bg-blue-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline">✓ Basic Info</Badge>
+              <Badge variant="outline">✓ Work Experience</Badge>
+              <Badge variant="outline">Education</Badge>
+              <Badge variant="secondary">Skills</Badge>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

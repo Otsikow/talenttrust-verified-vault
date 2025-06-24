@@ -340,47 +340,71 @@ export type Database = {
         Row: {
           account_locked_until: string | null
           auth_id: string
+          bio: string | null
+          company: string | null
           created_at: string
+          documents_verified: number | null
           email: string
           failed_login_attempts: number | null
           full_name: string | null
           id: string
+          job_title: string | null
           last_login_at: string | null
           last_login_ip: unknown | null
+          location: string | null
           mfa_enabled: boolean | null
           mfa_secret: string | null
+          phone: string | null
+          total_documents: number | null
           updated_at: string
           user_type: string
+          verification_score: number | null
         }
         Insert: {
           account_locked_until?: string | null
           auth_id: string
+          bio?: string | null
+          company?: string | null
           created_at?: string
+          documents_verified?: number | null
           email: string
           failed_login_attempts?: number | null
           full_name?: string | null
           id?: string
+          job_title?: string | null
           last_login_at?: string | null
           last_login_ip?: unknown | null
+          location?: string | null
           mfa_enabled?: boolean | null
           mfa_secret?: string | null
+          phone?: string | null
+          total_documents?: number | null
           updated_at?: string
           user_type?: string
+          verification_score?: number | null
         }
         Update: {
           account_locked_until?: string | null
           auth_id?: string
+          bio?: string | null
+          company?: string | null
           created_at?: string
+          documents_verified?: number | null
           email?: string
           failed_login_attempts?: number | null
           full_name?: string | null
           id?: string
+          job_title?: string | null
           last_login_at?: string | null
           last_login_ip?: unknown | null
+          location?: string | null
           mfa_enabled?: boolean | null
           mfa_secret?: string | null
+          phone?: string | null
+          total_documents?: number | null
           updated_at?: string
           user_type?: string
+          verification_score?: number | null
         }
         Relationships: []
       }
