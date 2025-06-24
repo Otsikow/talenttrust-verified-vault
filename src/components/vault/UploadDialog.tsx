@@ -101,7 +101,6 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
           });
           return;
         }
-        // For "other" types, we'll store the custom type directly
         finalDocumentType = customDocumentType.trim();
       } else {
         finalDocumentType = documentType;
@@ -109,13 +108,42 @@ const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: Uplo
 
       console.log('Uploading document with type:', finalDocumentType);
 
-      await uploadDocument(fileToUpload, {
+      // First upload the document
+      const uploadedDocument = await uploadDocument(fileToUpload, {
         name: documentName,
-        type: finalDocumentType as any, // We'll handle custom types in the service
+        type: finalDocumentType as any,
         issuer: issuer,
         expiry_date: expiryDate || undefined,
         privacy: 'private'
       });
+
+      // Then trigger verification
+      try {
+        const { verificationService } = await import('@/services/verificationService');
+        const verificationResult = await verificationService.verifyDocument(
+          fileToUpload, 
+          uploadedDocument?.id
+        );
+
+        if (verificationResult.success) {
+          toast({
+            title: "Document Uploaded and Verified",
+            description: `Document uploaded successfully. Verification status: ${verificationResult.verification?.status}`,
+          });
+        } else {
+          toast({
+            title: "Document Uploaded",
+            description: "Document uploaded but verification failed. You can try verification again later.",
+            variant: "destructive"
+          });
+        }
+      } catch (verificationError) {
+        console.error('Verification error:', verificationError);
+        toast({
+          title: "Document Uploaded",
+          description: "Document uploaded but verification is temporarily unavailable.",
+        });
+      }
 
       setIsOpen(false);
       resetUploadForm();
