@@ -6,6 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { 
   Search, 
   Send, 
   MoreVertical, 
@@ -15,15 +21,17 @@ import {
   Trash2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Messages = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedConversation, setSelectedConversation] = useState(1);
   const [messageText, setMessageText] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Mock conversation data
-  const conversations = [
+  // Mock conversation data with additional state
+  const [conversations, setConversations] = useState([
     {
       id: 1,
       name: "Sarah Chen - TechCorp Recruiter",
@@ -32,7 +40,9 @@ const Messages = () => {
       timestamp: "2 hours ago",
       unread: true,
       avatar: null,
-      role: "recruiter"
+      role: "recruiter",
+      isFavorite: false,
+      isArchived: false
     },
     {
       id: 2,
@@ -42,7 +52,9 @@ const Messages = () => {
       timestamp: "1 day ago",
       unread: false,
       avatar: null,
-      role: "hiring_manager"
+      role: "hiring_manager",
+      isFavorite: false,
+      isArchived: false
     },
     {
       id: 3,
@@ -52,12 +64,14 @@ const Messages = () => {
       timestamp: "3 days ago",
       unread: false,
       avatar: null,
-      role: "recruiter"
+      role: "recruiter",
+      isFavorite: true,
+      isArchived: false
     }
-  ];
+  ]);
 
-  // Mock messages for selected conversation
-  const messages = [
+  // Mock messages for selected conversation with state
+  const [messages, setMessages] = useState([
     {
       id: 1,
       sender: "other",
@@ -93,20 +107,93 @@ const Messages = () => {
       timestamp: "2 hours ago",
       senderName: "Sarah Chen"
     }
-  ];
+  ]);
 
-  const selectedConversationData = conversations.find(c => c.id === selectedConversation);
+  const selectedConversationData = conversations.find(c => c.id === selectedConversation && !c.isArchived);
   const filteredConversations = conversations.filter(conversation =>
-    conversation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    conversation.company.toLowerCase().includes(searchTerm.toLowerCase())
+    !conversation.isArchived &&
+    (conversation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    conversation.company.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
-      // Here you would typically send the message to your backend
-      console.log("Sending message:", messageText);
+      const newMessage = {
+        id: messages.length + 1,
+        sender: "me" as const,
+        content: messageText,
+        timestamp: new Date().toLocaleString(),
+        senderName: "You"
+      };
+      
+      setMessages([...messages, newMessage]);
+      
+      // Update the last message in conversations
+      setConversations(prev => prev.map(conv => 
+        conv.id === selectedConversation 
+          ? { ...conv, lastMessage: messageText, timestamp: "Just now" }
+          : conv
+      ));
+      
       setMessageText("");
+      toast({
+        title: "Message sent",
+        description: "Your message has been sent successfully.",
+      });
     }
+  };
+
+  const handleToggleFavorite = () => {
+    setConversations(prev => prev.map(conv => 
+      conv.id === selectedConversation 
+        ? { ...conv, isFavorite: !conv.isFavorite }
+        : conv
+    ));
+    
+    const isFavorite = selectedConversationData?.isFavorite;
+    toast({
+      title: isFavorite ? "Removed from favorites" : "Added to favorites",
+      description: isFavorite ? "Conversation removed from favorites." : "Conversation added to favorites.",
+    });
+  };
+
+  const handleArchiveConversation = () => {
+    setConversations(prev => prev.map(conv => 
+      conv.id === selectedConversation 
+        ? { ...conv, isArchived: true }
+        : conv
+    ));
+    
+    // Select another conversation if current one is archived
+    const remainingConversations = conversations.filter(c => c.id !== selectedConversation && !c.isArchived);
+    if (remainingConversations.length > 0) {
+      setSelectedConversation(remainingConversations[0].id);
+    } else {
+      setSelectedConversation(0);
+    }
+    
+    toast({
+      title: "Conversation archived",
+      description: "The conversation has been moved to your archive.",
+    });
+  };
+
+  const handleDeleteConversation = () => {
+    setConversations(prev => prev.filter(conv => conv.id !== selectedConversation));
+    
+    // Select another conversation if current one is deleted
+    const remainingConversations = conversations.filter(c => c.id !== selectedConversation);
+    if (remainingConversations.length > 0) {
+      setSelectedConversation(remainingConversations[0].id);
+    } else {
+      setSelectedConversation(0);
+    }
+    
+    toast({
+      title: "Conversation deleted",
+      description: "The conversation has been permanently deleted.",
+      variant: "destructive",
+    });
   };
 
   return (
@@ -183,6 +270,9 @@ const Messages = () => {
                             conversation.unread ? 'text-gray-900' : 'text-gray-700'
                           }`}>
                             {conversation.name}
+                            {conversation.isFavorite && (
+                              <Star className="inline h-3 w-3 ml-1 text-yellow-500 fill-current" />
+                            )}
                           </h4>
                           {conversation.unread && (
                             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -222,15 +312,38 @@ const Messages = () => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Star className="h-4 w-4" />
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={handleToggleFavorite}
+                        className={selectedConversationData.isFavorite ? "text-yellow-500" : ""}
+                      >
+                        <Star className={`h-4 w-4 ${selectedConversationData.isFavorite ? "fill-current" : ""}`} />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={handleArchiveConversation}>
                         <Archive className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={handleToggleFavorite}>
+                            <Star className="h-4 w-4 mr-2" />
+                            {selectedConversationData.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handleArchiveConversation}>
+                            <Archive className="h-4 w-4 mr-2" />
+                            Archive conversation
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handleDeleteConversation} className="text-red-600">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete conversation
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </CardHeader>
