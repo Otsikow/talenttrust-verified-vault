@@ -14,7 +14,9 @@ import {
   Shield, 
   BookmarkPlus,
   Heart,
-  Filter
+  Filter,
+  Bell,
+  User
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -101,7 +103,7 @@ const FindJobs = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
-              <Shield className="h-6 w-6 text-blue-600" />
+              <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
               <span className="text-xl font-bold text-gray-900">TrustTalent</span>
             </div>
             <nav className="hidden md:flex space-x-6">
@@ -114,11 +116,11 @@ const FindJobs = () => {
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
               <span className="sr-only">Notifications</span>
-              🔔
+              <Bell className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
               <span className="sr-only">Profile</span>
-              👤
+              <User className="h-4 w-4" />
             </Button>
           </div>
         </div>
