@@ -49,6 +49,11 @@ export const documentService = {
 
     if (error) throw error;
     
+    // Update user document count after fetching
+    if (userRecord && data) {
+      await this.updateUserDocumentCount(userRecord.id, data);
+    }
+    
     return (data || []).map(doc => ({
       ...doc,
       type: doc.type as Document['type'],
@@ -60,6 +65,24 @@ export const documentService = {
         status: vr.status as VerificationRequest['status']
       })) || []
     }));
+  },
+
+  async updateUserDocumentCount(userId: string, documents: any[]) {
+    try {
+      const totalDocuments = documents.length;
+      const verifiedDocuments = documents.filter(doc => doc.status === 'verified').length;
+      
+      await supabase
+        .from('users')
+        .update({
+          total_documents: totalDocuments,
+          documents_verified: verifiedDocuments,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+    } catch (error) {
+      console.error('Failed to update user document count:', error);
+    }
   },
 
   async uploadDocument(file: File, documentData: Partial<Document>, currentUser: any): Promise<any> {
@@ -134,6 +157,9 @@ export const documentService = {
 
     if (error) throw error;
 
+    // Update user document count after upload
+    await this.syncUserDocumentCount(currentUser.id);
+
     // Log document upload (with error handling)
     try {
       await securityService.logAuditEvent({
@@ -155,6 +181,33 @@ export const documentService = {
     }
 
     return data;
+  },
+
+  async syncUserDocumentCount(userId: string) {
+    try {
+      // Get current document count from database
+      const { data: documents, error } = await supabase
+        .from('documents')
+        .select('id, status')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      const totalDocuments = documents?.length || 0;
+      const verifiedDocuments = documents?.filter(doc => doc.status === 'verified').length || 0;
+      
+      // Update user profile with current counts
+      await supabase
+        .from('users')
+        .update({
+          total_documents: totalDocuments,
+          documents_verified: verifiedDocuments,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+    } catch (error) {
+      console.error('Failed to sync user document count:', error);
+    }
   },
 
   async requestVerification(documentId: string, requestType: VerificationRequest['request_type'], currentUser: any): Promise<any> {
@@ -200,6 +253,16 @@ export const documentService = {
   },
 
   async deleteDocument(documentId: string): Promise<void> {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) throw new Error('User not authenticated');
+
+    // Get user record from users table
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('id')
+      .eq('auth_id', user.user.id)
+      .single();
+
     const { error } = await supabase
       .from('documents')
       .delete()
@@ -207,26 +270,21 @@ export const documentService = {
 
     if (error) throw error;
 
+    // Update user document count after deletion
+    if (userRecord) {
+      await this.syncUserDocumentCount(userRecord.id);
+    }
+
     // Log document deletion (with error handling)
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (user.user) {
-        // Get user record from users table
-        const { data: userRecord } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_id', user.user.id)
-          .single();
-
-        if (userRecord) {
-          await securityService.logAuditEvent({
-            user_id: userRecord.id, // Use users table ID
-            action: 'document_delete',
-            resource_type: 'document',
-            resource_id: documentId,
-            details: { permanent_deletion: true }
-          });
-        }
+      if (userRecord) {
+        await securityService.logAuditEvent({
+          user_id: userRecord.id, // Use users table ID
+          action: 'document_delete',
+          resource_type: 'document',
+          resource_id: documentId,
+          details: { permanent_deletion: true }
+        });
       }
     } catch (error) {
       console.error('Failed to log audit event:', error);
