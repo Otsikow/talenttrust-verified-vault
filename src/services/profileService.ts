@@ -15,6 +15,8 @@ export interface UpdateProfileData {
 class ProfileService {
   async updateProfile(userId: string, data: UpdateProfileData): Promise<{ error?: string }> {
     try {
+      console.log('Updating profile for user:', userId, 'with data:', data);
+      
       // Update the users table with the new profile data
       const { error } = await supabase
         .from('users')
@@ -35,6 +37,7 @@ class ProfileService {
         return { error: error.message };
       }
 
+      console.log('Profile updated successfully');
       return {};
     } catch (error: any) {
       console.error('Profile update error:', error);
@@ -44,6 +47,8 @@ class ProfileService {
 
   async uploadAvatar(userId: string, file: File): Promise<{ avatarUrl?: string; error?: string }> {
     try {
+      console.log('Uploading avatar for user:', userId);
+      
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
@@ -66,10 +71,34 @@ class ProfileService {
         .from('avatars')
         .getPublicUrl(filePath);
 
+      console.log('Avatar uploaded successfully:', data.publicUrl);
       return { avatarUrl: data.publicUrl };
     } catch (error: any) {
       console.error('Avatar upload error:', error);
       return { error: 'An unexpected error occurred while uploading your avatar.' };
+    }
+  }
+
+  async getProfile(userId: string): Promise<{ profile?: any; error?: string }> {
+    try {
+      console.log('Fetching profile for user:', userId);
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('auth_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Profile fetch error:', error);
+        return { error: error.message };
+      }
+
+      console.log('Profile fetched successfully:', data);
+      return { profile: data };
+    } catch (error: any) {
+      console.error('Profile fetch error:', error);
+      return { error: 'An unexpected error occurred while fetching your profile.' };
     }
   }
 }

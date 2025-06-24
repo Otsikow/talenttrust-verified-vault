@@ -20,6 +20,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   // User profile state that gets populated from auth
   const [profileData, setProfileData] = useState({
@@ -37,8 +38,11 @@ const Profile = () => {
     totalDocuments: 0
   });
 
+  // Load profile data when userProfile changes
   useEffect(() => {
-    if (userProfile && user) {
+    if (userProfile && user && !profileLoaded) {
+      console.log('Loading profile data:', userProfile);
+      
       // Parse full name into first and last name
       const nameParts = userProfile.full_name?.split(' ') || [''];
       const firstName = nameParts[0] || '';
@@ -66,11 +70,20 @@ const Profile = () => {
       if (user.id) {
         setAvatarUrl(`https://mjaqvbuhnhatofwkgako.supabase.co/storage/v1/object/public/avatars/avatars/${user.id}.jpg`);
       }
+      
+      setProfileLoaded(true);
     }
-  }, [userProfile, user]);
+  }, [userProfile, user, profileLoaded]);
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save your profile",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
     
@@ -85,9 +98,12 @@ const Profile = () => {
       bio: profileData.bio
     };
 
+    console.log('Saving profile data:', updateData);
+
     const { error } = await profileService.updateProfile(user.id, updateData);
     
     if (error) {
+      console.error('Profile save error:', error);
       toast({
         title: "Error",
         description: error,
@@ -96,9 +112,11 @@ const Profile = () => {
     } else {
       toast({
         title: "Success",
-        description: "Profile updated successfully",
+        description: "Profile updated successfully and saved to database",
       });
       setIsEditing(false);
+      // Force a reload of the profile data to confirm it was saved
+      setProfileLoaded(false);
     }
     
     setIsLoading(false);
@@ -137,6 +155,14 @@ const Profile = () => {
     return null;
   }
 
+  if (!profileLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div>Loading profile...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
@@ -170,7 +196,7 @@ const Profile = () => {
       <div className="container mx-auto px-4 py-8">
         <ProfileHeader 
           profileData={profileData}
-          isEditing={isEditing}
+          isEditing={isEditing && !isLoading}
           onEditToggle={handleEditToggle}
           onSave={handleSave}
           avatarUrl={avatarUrl}
@@ -181,7 +207,7 @@ const Profile = () => {
           activeTab={activeTab}
           onTabChange={setActiveTab}
           profileData={profileData}
-          isEditing={isEditing}
+          isEditing={isEditing && !isLoading}
           onProfileDataChange={setProfileData}
         />
       </div>
