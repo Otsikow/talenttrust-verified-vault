@@ -83,15 +83,38 @@ class ProfileService {
     try {
       console.log('Fetching profile for user:', userId);
       
+      // Use maybeSingle() to handle cases with multiple or no rows
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('auth_id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Profile fetch error:', error);
         return { error: error.message };
+      }
+
+      // If no profile exists, create one
+      if (!data) {
+        console.log('No profile found, creating default profile');
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert({
+            auth_id: userId,
+            email: '',
+            user_type: 'job_seeker'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating profile:', createError);
+          return { error: createError.message };
+        }
+
+        console.log('Profile created successfully:', newProfile);
+        return { profile: newProfile };
       }
 
       console.log('Profile fetched successfully:', data);
