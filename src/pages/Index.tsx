@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,6 @@ const Index = () => {
           <div className="flex items-center space-x-2">
             <img src="/lovable-uploads/91251101-60fc-418a-a053-cf2e636fde36.png" alt="TrustTalent Logo" className="h-8 w-8" />
             <span className="text-2xl font-bold text-gray-900">TrustTalent</span>
-            <Badge variant="secondary" className="ml-2">TalentTrust Edition</Badge>
           </div>
           <div className="flex space-x-4">
             <Button variant="outline" onClick={() => navigate("/login")}>
