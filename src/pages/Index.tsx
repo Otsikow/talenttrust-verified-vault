@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ const Index = () => {
             <span className="block text-blue-600 mt-2">The Future of Talent Verification</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            TrustTalent revolutionizes hiring and admissions with AI-powered verification of degrees, certificates, 
+            TrustTalent revolutionises hiring and admissions with AI-powered verification of degrees, certificates, 
             references, and work samples. Build trust, reduce fraud, make confident decisions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -48,7 +49,7 @@ const Index = () => {
               <Briefcase className="mr-2 h-5 w-5" />
               I'm Hiring Talent
             </Button>
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=university")}>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=university")}>
               <GraduationCap className="mr-2 h-5 w-5" />
               University
             </Button>
@@ -65,7 +66,7 @@ const Index = () => {
               <Shield className="h-12 w-12 text-blue-600 mb-4" />
               <CardTitle>AI-Powered Verification</CardTitle>
               <CardDescription>
-                Our TalentTrust Engine verifies degrees, certificates, licenses, and work samples with 99.7% accuracy
+                Our TalentTrust Engine verifies degrees, certificates, licences, and work samples with 99.7% accuracy
               </CardDescription>
             </CardHeader>
           </Card>
@@ -75,7 +76,7 @@ const Index = () => {
               <FileText className="h-12 w-12 text-green-600 mb-4" />
               <CardTitle>Secure Document Vault</CardTitle>
               <CardDescription>
-                Store, organize, and share verified credentials securely. One-click application attachments
+                Store, organise, and share verified credentials securely. One-click application attachments
               </CardDescription>
             </CardHeader>
           </Card>
@@ -83,7 +84,7 @@ const Index = () => {
           <Card className="border-purple-100 hover:border-purple-200 transition-colors">
             <CardHeader>
               <CheckCircle className="h-12 w-12 text-purple-600 mb-4" />
-              <CardTitle>Trusted by Top Organizations</CardTitle>
+              <CardTitle>Trusted by Top Organisations</CardTitle>
               <CardDescription>
                 Join thousands of employers and universities using verified credential data to make better decisions
               </CardDescription>
@@ -106,7 +107,7 @@ const Index = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold">Upload Your Documents</h4>
-                    <p className="text-gray-600">Add degrees, certificates, licenses, and work samples to your secure vault</p>
+                    <p className="text-gray-600">Add degrees, certificates, licences, and work samples to your secure vault</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
