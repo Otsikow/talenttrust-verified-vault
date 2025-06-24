@@ -9,10 +9,67 @@ import JobsHeader from "@/components/jobs/JobsHeader";
 import JobSearchFilters from "@/components/jobs/JobSearchFilters";
 import JobList from "@/components/jobs/JobList";
 
+// Mock job data for demonstration
+const mockJobs = [
+  {
+    id: 1,
+    title: "Senior Frontend Developer",
+    company: "TechCorp Ltd",
+    location: "London, UK",
+    type: "Permanent",
+    salary: "£60,000 - £80,000",
+    posted: "2 days ago",
+    description: "We're looking for an experienced Frontend Developer to join our growing team...",
+    requirements: ["React", "TypeScript", "CSS", "Git"],
+    verificationRequired: true,
+    saved: false
+  },
+  {
+    id: 2,
+    title: "Full Stack Engineer",
+    company: "StartupX",
+    location: "Manchester, UK",
+    type: "Contract",
+    salary: "£450 - £550/day",
+    posted: "1 week ago",
+    description: "Join our dynamic startup as a Full Stack Engineer working on cutting-edge projects...",
+    requirements: ["Node.js", "React", "PostgreSQL", "AWS"],
+    verificationRequired: false,
+    saved: true
+  }
+];
+
 const FindJobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
+  const [jobType, setJobType] = useState("all");
+  const [verificationRequired, setVerificationRequired] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setLocation("");
+    setJobType("all");
+    setVerificationRequired("all");
+  };
+
+  // Filter jobs based on search criteria
+  const filteredJobs = mockJobs.filter(job => {
+    const matchesSearch = searchQuery === "" || 
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesLocation = location === "" || 
+      job.location.toLowerCase().includes(location.toLowerCase());
+    
+    const matchesType = jobType === "all" || job.type.toLowerCase() === jobType.toLowerCase();
+    
+    const matchesVerification = verificationRequired === "all" ||
+      (verificationRequired === "required" && job.verificationRequired) ||
+      (verificationRequired === "not-required" && !job.verificationRequired);
+    
+    return matchesSearch && matchesLocation && matchesType && matchesVerification;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -70,7 +127,16 @@ const FindJobs = () => {
         <div className="grid lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Filters Sidebar */}
           <div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <JobSearchFilters />
+            <JobSearchFilters 
+              searchTerm={searchQuery}
+              location={location}
+              jobType={jobType}
+              verificationRequired={verificationRequired}
+              onSearchTermChange={setSearchQuery}
+              onLocationChange={setLocation}
+              onJobTypeChange={setJobType}
+              onVerificationRequiredChange={setVerificationRequired}
+            />
           </div>
 
           {/* Job Results */}
@@ -78,7 +144,7 @@ const FindJobs = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
               <div>
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Job Results</h2>
-                <p className="text-sm text-gray-600">245 jobs found</p>
+                <p className="text-sm text-gray-600">{filteredJobs.length} jobs found</p>
               </div>
               <div className="flex items-center space-x-2 text-sm">
                 <span className="text-gray-600">Sort by:</span>
@@ -88,7 +154,7 @@ const FindJobs = () => {
               </div>
             </div>
 
-            <JobList />
+            <JobList jobs={filteredJobs} onClearFilters={handleClearFilters} />
           </div>
         </div>
       </div>

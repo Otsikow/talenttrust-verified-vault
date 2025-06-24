@@ -10,7 +10,12 @@ import FileUploadInput from "./FileUploadInput";
 import DocumentFormFields from "./DocumentFormFields";
 import UploadActions from "./UploadActions";
 
-const UploadDialog = () => {
+interface UploadDialogProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const UploadDialog = ({ isOpen: externalIsOpen, onClose: externalOnClose }: UploadDialogProps = {}) => {
   const [uploadMethod, setUploadMethod] = useState<"file" | "camera">("file");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -20,10 +25,16 @@ const UploadDialog = () => {
   const [issuer, setIssuer] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
 
   const { uploadDocument } = useDocuments();
   const { toast } = useToast();
+
+  // Use external props if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalOnClose ? 
+    (open: boolean) => { if (!open) externalOnClose(); } :
+    setInternalIsOpen;
 
   const resetUploadForm = () => {
     setUploadMethod("file");
@@ -117,17 +128,27 @@ const UploadDialog = () => {
     setIsOpen(false);
   };
 
+  const DialogComponent = externalIsOpen !== undefined ? 
+    ({ children }: { children: React.ReactNode }) => <>{children}</> :
+    Dialog;
+
+  const TriggerComponent = externalIsOpen !== undefined ? 
+    ({ children }: { children: React.ReactNode }) => null :
+    DialogTrigger;
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
+    <DialogComponent open={isOpen} onOpenChange={(open) => {
       setIsOpen(open);
       if (!open) resetUploadForm();
     }}>
-      <DialogTrigger asChild>
-        <Button className="w-full sm:w-auto">
-          <Plus className="h-4 w-4 mr-2" />
-          Upload Document
-        </Button>
-      </DialogTrigger>
+      {!externalIsOpen && (
+        <TriggerComponent asChild>
+          <Button className="w-full sm:w-auto">
+            <Plus className="h-4 w-4 mr-2" />
+            Upload Document
+          </Button>
+        </TriggerComponent>
+      )}
       <DialogContent className="max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Upload New Document</DialogTitle>
@@ -171,7 +192,7 @@ const UploadDialog = () => {
           />
         </div>
       </DialogContent>
-    </Dialog>
+    </DialogComponent>
   );
 };
 

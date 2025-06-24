@@ -8,11 +8,25 @@ import DocumentVaultHeader from "@/components/vault/DocumentVaultHeader";
 import UploadDialog from "@/components/vault/UploadDialog";
 import DocumentStats from "@/components/vault/DocumentStats";
 import DocumentList from "@/components/vault/DocumentList";
+import DocumentControls from "@/components/vault/DocumentControls";
 import { useDocuments } from "@/hooks/useDocuments";
 
 const DocumentVault = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const { documents, isLoading } = useDocuments();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const { documents, loading } = useDocuments();
+
+  // Filter documents based on search and filters
+  const filteredDocuments = documents.filter(doc => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         doc.issuer.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" || doc.type === filterType;
+    const matchesStatus = filterStatus === "all" || doc.status === filterStatus;
+    
+    return matchesSearch && matchesType && matchesStatus;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -36,7 +50,17 @@ const DocumentVault = () => {
         </div>
 
         {/* Stats Section */}
-        <DocumentStats />
+        <DocumentStats documents={documents} />
+
+        {/* Search and Filter Controls */}
+        <DocumentControls
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          filterType={filterType}
+          setFilterType={setFilterType}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+        />
 
         {/* Quick Actions */}
         <Card className="mb-6 sm:mb-8">
@@ -84,7 +108,13 @@ const DocumentVault = () => {
         </Card>
 
         {/* Documents List */}
-        <DocumentList documents={documents} isLoading={isLoading} />
+        <DocumentList 
+          documents={documents}
+          filteredDocuments={filteredDocuments}
+          searchTerm={searchTerm}
+          filterType={filterType}
+          filterStatus={filterStatus}
+        />
 
         {/* Upload Dialog */}
         <UploadDialog 
