@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface SecurityEvent {
   id: string;
   event_type: string;
-  ip_address?: string;
+  ip_address?: string | null;
   user_agent?: string;
   location?: string;
   severity: string;
@@ -23,8 +22,8 @@ interface AuditLog {
   id: string;
   action: string;
   resource_type: string;
-  resource_id?: string;
-  ip_address?: string;
+  resource_id?: string | null;
+  ip_address?: string | null;
   created_at: string;
 }
 
@@ -58,8 +57,19 @@ const SecurityDashboard = () => {
         .order('created_at', { ascending: false })
         .limit(100);
 
-      setSecurityEvents(events || []);
-      setAuditLogs(logs || []);
+      // Transform the data to match our interfaces
+      const transformedEvents: SecurityEvent[] = (events || []).map(event => ({
+        ...event,
+        ip_address: event.ip_address?.toString() || null
+      }));
+
+      const transformedLogs: AuditLog[] = (logs || []).map(log => ({
+        ...log,
+        ip_address: log.ip_address?.toString() || null
+      }));
+
+      setSecurityEvents(transformedEvents);
+      setAuditLogs(transformedLogs);
     } catch (error) {
       console.error('Error fetching security data:', error);
     } finally {
