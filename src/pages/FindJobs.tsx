@@ -1,24 +1,9 @@
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Search, 
-  MapPin, 
-  Building, 
-  Clock, 
-  PoundSterling, 
-  Shield, 
-  BookmarkPlus,
-  Heart,
-  Filter,
-  Bell,
-  User
-} from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import JobsHeader from "@/components/jobs/JobsHeader";
+import JobSearchFilters from "@/components/jobs/JobSearchFilters";
+import JobList from "@/components/jobs/JobList";
 
 const FindJobs = () => {
   const navigate = useNavigate();
@@ -96,35 +81,16 @@ const FindJobs = () => {
     return matchesSearch && matchesLocation && matchesType && matchesVerification;
   });
 
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setLocation("");
+    setJobType("all");
+    setVerificationRequired("all");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
-              <span className="text-xl font-bold text-gray-900">TrustTalent</span>
-            </div>
-            <nav className="hidden md:flex space-x-6">
-              <Button variant="ghost" onClick={() => navigate("/dashboard/seeker")}>Dashboard</Button>
-              <Button variant="ghost" className="font-medium">Find Jobs</Button>
-              <Button variant="ghost" onClick={() => navigate("/vault")}>My Vault</Button>
-              <Button variant="ghost" onClick={() => navigate("/messages")}>Messages</Button>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
-              <span className="sr-only">Notifications</span>
-              <Bell className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
-              <span className="sr-only">Profile</span>
-              <User className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <JobsHeader />
 
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
@@ -133,168 +99,21 @@ const FindJobs = () => {
           <p className="text-gray-600">Discover opportunities that match your verified skills and experience</p>
         </div>
 
-        {/* Search and Filters */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Search & Filter Jobs</CardTitle>
-            <CardDescription>Use the filters below to find the perfect role for you</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="lg:col-span-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Job title, company, or keywords..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Location..."
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+        <JobSearchFilters
+          searchTerm={searchTerm}
+          location={location}
+          jobType={jobType}
+          verificationRequired={verificationRequired}
+          onSearchTermChange={setSearchTerm}
+          onLocationChange={setLocation}
+          onJobTypeChange={setJobType}
+          onVerificationRequiredChange={setVerificationRequired}
+        />
 
-              <Select value={jobType} onValueChange={setJobType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Job Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="permanent">Permanent</SelectItem>
-                  <SelectItem value="contract">Contract</SelectItem>
-                  <SelectItem value="temporary">Temporary</SelectItem>
-                  <SelectItem value="part-time">Part-time</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={verificationRequired} onValueChange={setVerificationRequired}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Verification" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Jobs</SelectItem>
-                  <SelectItem value="required">Verification Required</SelectItem>
-                  <SelectItem value="not-required">No Verification Required</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results Summary */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">
-            Showing {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'}
-          </p>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              More Filters
-            </Button>
-          </div>
-        </div>
-
-        {/* Job Listings */}
-        <div className="space-y-6">
-          {filteredJobs.map((job) => (
-            <Card key={job.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 cursor-pointer">
-                        {job.title}
-                      </h3>
-                      {job.verificationRequired && (
-                        <Badge className="bg-green-100 text-green-700">
-                          <Shield className="h-3 w-3 mr-1" />
-                          Verification Required
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center space-x-4 text-gray-600 mb-3">
-                      <div className="flex items-center space-x-1">
-                        <Building className="h-4 w-4" />
-                        <span>{job.company}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="h-4 w-4" />
-                        <span>{job.location}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-4 w-4" />
-                        <span>{job.posted}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4 mb-4">
-                      <Badge variant="outline">{job.type}</Badge>
-                      <div className="flex items-center space-x-1 text-green-600 font-medium">
-                        <PoundSterling className="h-4 w-4" />
-                        <span>{job.salary}</span>
-                      </div>
-                    </div>
-
-                    <p className="text-gray-700 mb-4">{job.description}</p>
-
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {job.requirements.map((req, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {req}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col space-y-2 ml-4">
-                    <Button size="sm" variant={job.saved ? "default" : "outline"}>
-                      {job.saved ? <Heart className="h-4 w-4 mr-2 fill-current" /> : <BookmarkPlus className="h-4 w-4 mr-2" />}
-                      {job.saved ? "Saved" : "Save"}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="flex space-x-2">
-                    <Button size="sm" variant="outline">View Details</Button>
-                    <Button size="sm" variant="outline">Company Profile</Button>
-                  </div>
-                  <Button size="sm">Apply Now</Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredJobs.length === 0 && (
-          <Card>
-            <CardContent className="text-center py-12">
-              <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
-              <p className="text-gray-600 mb-4">
-                Try adjusting your search criteria or filters to find more opportunities
-              </p>
-              <Button variant="outline" onClick={() => {
-                setSearchTerm("");
-                setLocation("");
-                setJobType("all");
-                setVerificationRequired("all");
-              }}>
-                Clear All Filters
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        <JobList 
+          jobs={filteredJobs}
+          onClearFilters={handleClearFilters}
+        />
       </div>
     </div>
   );
