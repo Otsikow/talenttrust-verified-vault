@@ -120,7 +120,7 @@ const Notifications = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
-              <Shield className="h-6 w-6 text-blue-600" />
+              <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
               <span className="text-xl font-bold text-gray-900">TrustTalent</span>
             </div>
             <nav className="hidden md:flex space-x-6">
