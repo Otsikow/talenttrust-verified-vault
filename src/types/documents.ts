@@ -3,7 +3,7 @@ export interface Document {
   id: string;
   user_id: string;
   name: string;
-  type: 'degree' | 'certificate' | 'license' | 'reference' | 'work_sample' | 'cv_resume';
+  type: 'degree' | 'certificate' | 'license' | 'reference' | 'work_sample' | 'cv_resume' | 'transcript' | 'passport' | 'id_card' | 'birth_certificate' | 'marriage_certificate' | 'bank_statement' | 'insurance_document' | 'tax_document' | 'medical_record' | 'other';
   issuer: string;
   institution_id?: string;
   file_url: string;

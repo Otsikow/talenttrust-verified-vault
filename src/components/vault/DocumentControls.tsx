@@ -50,6 +50,16 @@ const DocumentControls = ({
                   <SelectItem value="reference">References</SelectItem>
                   <SelectItem value="work_sample">Work Samples</SelectItem>
                   <SelectItem value="cv_resume">CV/Resume</SelectItem>
+                  <SelectItem value="transcript">Transcripts</SelectItem>
+                  <SelectItem value="passport">Passports</SelectItem>
+                  <SelectItem value="id_card">ID Cards</SelectItem>
+                  <SelectItem value="birth_certificate">Birth Certificates</SelectItem>
+                  <SelectItem value="marriage_certificate">Marriage Certificates</SelectItem>
+                  <SelectItem value="bank_statement">Bank Statements</SelectItem>
+                  <SelectItem value="insurance_document">Insurance Documents</SelectItem>
+                  <SelectItem value="tax_document">Tax Documents</SelectItem>
+                  <SelectItem value="medical_record">Medical Records</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={filterStatus} onValueChange={setFilterStatus}>
