@@ -43,31 +43,40 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
       <CardContent>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="firstName" className={!profileData.firstName && isEditing ? "text-red-500" : ""}>
+              First Name {isEditing && <span className="text-red-500">*</span>}
+            </Label>
             <Input
               id="firstName"
               value={profileData.firstName || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('firstName', e.target.value)}
+              className={!profileData.firstName && isEditing ? "border-red-500" : ""}
+              placeholder={isEditing ? "Enter your first name" : ""}
             />
           </div>
           <div>
-            <Label htmlFor="lastName">Surname</Label>
+            <Label htmlFor="lastName">Last Name</Label>
             <Input
               id="lastName"
               value={profileData.lastName || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('lastName', e.target.value)}
+              placeholder={isEditing ? "Enter your last name" : ""}
             />
           </div>
           <div>
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email" className={!profileData.email && isEditing ? "text-red-500" : ""}>
+              Email Address {isEditing && <span className="text-red-500">*</span>}
+            </Label>
             <Input
               id="email"
               type="email"
               value={profileData.email || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('email', e.target.value)}
+              className={!profileData.email && isEditing ? "border-red-500" : ""}
+              placeholder={isEditing ? "Enter your email address" : ""}
             />
           </div>
           <div>
@@ -77,6 +86,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
               value={profileData.phone || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('phone', e.target.value)}
+              placeholder={isEditing ? "Enter your phone number" : ""}
             />
           </div>
           <div>
@@ -86,6 +96,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
               value={profileData.location || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('location', e.target.value)}
+              placeholder={isEditing ? "Enter your location" : ""}
             />
           </div>
           <div>
@@ -95,6 +106,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
               value={profileData.jobTitle || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('jobTitle', e.target.value)}
+              placeholder={isEditing ? "Enter your job title" : ""}
             />
           </div>
           <div>
@@ -104,6 +116,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
               value={profileData.company || ''}
               disabled={!isEditing}
               onChange={(e) => handleFieldChange('company', e.target.value)}
+              placeholder={isEditing ? "Enter your company" : ""}
             />
           </div>
         </div>
@@ -117,8 +130,17 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
             disabled={!isEditing}
             onChange={(e) => handleFieldChange('bio', e.target.value)}
             className="mt-1"
+            placeholder={isEditing ? "Write a brief professional summary about yourself..." : ""}
           />
         </div>
+
+        {isEditing && (
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-700">
+              <span className="text-red-500">*</span> Required fields must be filled out before saving.
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
