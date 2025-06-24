@@ -1,119 +1,96 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, MapPin, Clock, DollarSign, Bookmark, Filter } from "lucide-react";
 import JobsHeader from "@/components/jobs/JobsHeader";
 import JobSearchFilters from "@/components/jobs/JobSearchFilters";
 import JobList from "@/components/jobs/JobList";
 
 const FindJobs = () => {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
-  const [jobType, setJobType] = useState("all");
-  const [salaryRange, setSalaryRange] = useState("all");
-  const [verificationRequired, setVerificationRequired] = useState("all");
-
-  // Mock job data with British terminology
-  const jobs = [
-    {
-      id: 1,
-      title: "Senior Software Engineer",
-      company: "TechCorp Ltd",
-      location: "London, Greater London",
-      type: "Permanent",
-      salary: "£80,000 - £100,000",
-      posted: "2 days ago",
-      description: "We're seeking a talented Senior Software Engineer to join our innovative team. You'll be working on cutting-edge projects using the latest technologies.",
-      requirements: ["5+ years experience", "React/TypeScript", "Node.js", "AWS"],
-      verificationRequired: true,
-      saved: false
-    },
-    {
-      id: 2,
-      title: "Product Manager",
-      company: "StartupXYZ",
-      location: "Manchester, Greater Manchester",
-      type: "Permanent",
-      salary: "£70,000 - £85,000",
-      posted: "1 day ago",
-      description: "Join our growing team as a Product Manager. You'll drive product strategy and work closely with our engineering and design teams.",
-      requirements: ["3+ years Product Management", "Agile methodologies", "Stakeholder management"],
-      verificationRequired: true,
-      saved: true
-    },
-    {
-      id: 3,
-      title: "UX Designer",
-      company: "Creative Agency",
-      location: "Edinburgh, Scotland",
-      type: "Contract",
-      salary: "£450 - £550 per day",
-      posted: "3 days ago",
-      description: "We're looking for a creative UX Designer to help us craft exceptional user experiences for our clients.",
-      requirements: ["Portfolio of UX work", "Figma/Sketch", "User research experience"],
-      verificationRequired: false,
-      saved: false
-    },
-    {
-      id: 4,
-      title: "DevOps Engineer",
-      company: "CloudTech Solutions",
-      location: "Birmingham, West Midlands",
-      type: "Permanent",
-      salary: "£65,000 - £80,000",
-      posted: "5 days ago",
-      description: "Join our infrastructure team to build and maintain scalable cloud solutions for our enterprise clients.",
-      requirements: ["Docker/Kubernetes", "AWS/Azure", "CI/CD pipelines", "Terraform"],
-      verificationRequired: true,
-      saved: false
-    }
-  ];
-
-  const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLocation = location === "" || job.location.toLowerCase().includes(location.toLowerCase());
-    const matchesType = jobType === "all" || job.type.toLowerCase() === jobType.toLowerCase();
-    const matchesVerification = verificationRequired === "all" || 
-                               (verificationRequired === "required" && job.verificationRequired) ||
-                               (verificationRequired === "not-required" && !job.verificationRequired);
-    
-    return matchesSearch && matchesLocation && matchesType && matchesVerification;
-  });
-
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setLocation("");
-    setJobType("all");
-    setVerificationRequired("all");
-  };
+  const [showFilters, setShowFilters] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <JobsHeader />
-
-      <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Jobs</h1>
-          <p className="text-gray-600">Discover opportunities that match your verified skills and experience</p>
+      
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        {/* Header Section */}
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Find Your Next Opportunity</h1>
+          <p className="text-gray-600 text-sm sm:text-base">Discover jobs that match your verified skills and experience</p>
         </div>
 
-        <JobSearchFilters
-          searchTerm={searchTerm}
-          location={location}
-          jobType={jobType}
-          verificationRequired={verificationRequired}
-          onSearchTermChange={setSearchTerm}
-          onLocationChange={setLocation}
-          onJobTypeChange={setJobType}
-          onVerificationRequiredChange={setVerificationRequired}
-        />
+        {/* Search Section */}
+        <Card className="mb-6 sm:mb-8">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="relative lg:col-span-2">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search jobs, skills, or companies..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center space-x-2 w-full sm:w-auto"
+                >
+                  <Filter className="h-4 w-4" />
+                  <span>Filters</span>
+                </Button>
+                <Button className="w-full sm:w-auto">
+                  <Search className="h-4 w-4 mr-2" />
+                  Search Jobs
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <JobList 
-          jobs={filteredJobs}
-          onClearFilters={handleClearFilters}
-        />
+        <div className="grid lg:grid-cols-4 gap-6 sm:gap-8">
+          {/* Filters Sidebar */}
+          <div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <JobSearchFilters />
+          </div>
+
+          {/* Job Results */}
+          <div className="lg:col-span-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
+              <div>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Job Results</h2>
+                <p className="text-sm text-gray-600">245 jobs found</p>
+              </div>
+              <div className="flex items-center space-x-2 text-sm">
+                <span className="text-gray-600">Sort by:</span>
+                <Button variant="ghost" size="sm" className="text-xs">Relevance</Button>
+                <Button variant="ghost" size="sm" className="text-xs">Date</Button>
+                <Button variant="ghost" size="sm" className="text-xs">Salary</Button>
+              </div>
+            </div>
+
+            <JobList />
+          </div>
+        </div>
       </div>
     </div>
   );

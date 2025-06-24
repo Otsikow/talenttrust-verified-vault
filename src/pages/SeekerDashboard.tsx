@@ -10,13 +10,13 @@ import {
   MessageSquare, 
   Star,
   TrendingUp,
-  Calendar,
   Bell,
   User
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
+import MobileNavigation from "@/components/navigation/MobileNavigation";
 
 const SeekerDashboard = () => {
   const navigate = useNavigate();
@@ -82,82 +82,85 @@ const SeekerDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
-              <span className="text-xl font-bold text-gray-900">TrustTalent</span>
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4 sm:space-x-6">
+              <div className="flex items-center space-x-2">
+                <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
+                <span className="text-lg sm:text-xl font-bold text-gray-900">TrustTalent</span>
+              </div>
+              <nav className="hidden md:flex space-x-6">
+                <Button variant="ghost" className="font-medium text-sm">Dashboard</Button>
+                <Button variant="ghost" onClick={() => navigate("/jobs")} className="text-sm">Find Jobs</Button>
+                <Button variant="ghost" onClick={() => navigate("/vault")} className="text-sm">My Vault</Button>
+                <Button variant="ghost" onClick={() => navigate("/messages")} className="text-sm">Messages</Button>
+              </nav>
             </div>
-            <nav className="hidden md:flex space-x-6">
-              <Button variant="ghost" className="font-medium">Dashboard</Button>
-              <Button variant="ghost" onClick={() => navigate("/jobs")}>Find Jobs</Button>
-              <Button variant="ghost" onClick={() => navigate("/vault")}>My Vault</Button>
-              <Button variant="ghost" onClick={() => navigate("/messages")}>Messages</Button>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
-              <Bell className="h-4 w-4" />
-              <span className="sr-only">Notifications</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="flex items-center space-x-2">
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={avatarUrl} />
-                <AvatarFallback className="text-xs">
-                  {getInitials()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="hidden md:inline">{displayName}</span>
-            </Button>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <MobileNavigation />
+              <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")} className="hidden sm:flex">
+                <Bell className="h-4 w-4" />
+                <span className="sr-only">Notifications</span>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="hidden sm:flex items-center space-x-2">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={avatarUrl} />
+                  <AvatarFallback className="text-xs">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden lg:inline text-sm">{displayName}</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Welcome back, {displayName.split(' ')[0] || displayName}!
           </h1>
-          <p className="text-gray-600">Here's what's happening with your job search today.</p>
+          <p className="text-gray-600 text-sm sm:text-base">Here's what's happening with your job search today.</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {stats.map((stat, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
+            <Card key={index} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{stat.label}</p>
+                    <p className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
                   </div>
-                  <stat.icon className="h-8 w-8 text-blue-600" />
+                  <stat.icon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 flex-shrink-0 ml-2" />
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Quick Actions */}
           <div className="lg:col-span-2">
             <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>Get things done faster</CardDescription>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg sm:text-xl">Quick Actions</CardTitle>
+                <CardDescription className="text-sm">Get things done faster</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                   {quickActions.map((action, index) => (
-                    <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow" onClick={action.action}>
+                    <Card key={index} className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" onClick={action.action}>
                       <CardContent className="p-4">
                         <div className="flex items-start space-x-3">
-                          <action.icon className="h-6 w-6 text-blue-600 mt-1" />
-                          <div>
-                            <h3 className="font-semibold text-gray-900">{action.title}</h3>
-                            <p className="text-sm text-gray-600">{action.description}</p>
+                          <action.icon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mt-1 flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{action.title}</h3>
+                            <p className="text-xs sm:text-sm text-gray-600 mt-1">{action.description}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -171,21 +174,21 @@ const SeekerDashboard = () => {
           {/* Recent Activity */}
           <div>
             <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Your latest updates</CardDescription>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg sm:text-xl">Recent Activity</CardTitle>
+                <CardDescription className="text-sm">Your latest updates</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {recentActivity.map((activity, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
+                      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
                         activity.status === 'success' ? 'bg-green-500' :
                         activity.status === 'pending' ? 'bg-yellow-500' : 'bg-blue-500'
                       }`} />
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                        <p className="text-sm text-gray-600">{activity.item}</p>
+                        <p className="text-sm text-gray-600 truncate">{activity.item}</p>
                         <p className="text-xs text-gray-500">{activity.time}</p>
                       </div>
                     </div>
@@ -197,13 +200,13 @@ const SeekerDashboard = () => {
         </div>
 
         {/* Profile Completion */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-yellow-500" />
+        <Card className="mt-6 sm:mt-8">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+              <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
               <span>Profile Completion</span>
             </CardTitle>
-            <CardDescription>Complete your profile to get better job matches</CardDescription>
+            <CardDescription className="text-sm">Complete your profile to get better job matches</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
@@ -211,13 +214,13 @@ const SeekerDashboard = () => {
               <span className="text-sm text-gray-600">75%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-              <div className="bg-blue-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+              <div className="bg-blue-600 h-2 rounded-full transition-all duration-500" style={{ width: '75%' }}></div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">✓ Basic Info</Badge>
-              <Badge variant="outline">✓ Work Experience</Badge>
-              <Badge variant="outline">Education</Badge>
-              <Badge variant="secondary">Skills</Badge>
+              <Badge variant="outline" className="text-xs">✓ Basic Info</Badge>
+              <Badge variant="outline" className="text-xs">✓ Work Experience</Badge>
+              <Badge variant="outline" className="text-xs">Education</Badge>
+              <Badge variant="secondary" className="text-xs">Skills</Badge>
             </div>
           </CardContent>
         </Card>
