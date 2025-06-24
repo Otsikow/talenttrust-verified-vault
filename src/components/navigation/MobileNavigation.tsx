@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, Home, Briefcase, FileText, MessageSquare, User, Bell } from "lucide-react";
+import { Menu, X, Home, Briefcase, FileText, MessageSquare, User, Bell, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,6 +29,7 @@ const MobileNavigation = () => {
     { icon: Briefcase, label: "Find Jobs", path: "/jobs" },
     { icon: FileText, label: "My Vault", path: "/vault" },
     { icon: MessageSquare, label: "Messages", path: "/messages" },
+    { icon: DollarSign, label: "Pricing", path: "/pricing" },
     { icon: User, label: "Profile", path: "/profile" },
     { icon: Bell, label: "Notifications", path: "/notifications" },
   ];
