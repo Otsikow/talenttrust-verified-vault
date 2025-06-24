@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,10 +35,20 @@ interface ProfileHeaderProps {
   isEditing: boolean;
   onEditToggle: () => void;
   onSave: () => void;
+  avatarUrl?: string;
+  onAvatarChange?: (file: File) => void;
 }
 
-const ProfileHeader = ({ profileData, isEditing, onEditToggle, onSave }: ProfileHeaderProps) => {
+const ProfileHeader = ({ 
+  profileData, 
+  isEditing, 
+  onEditToggle, 
+  onSave, 
+  avatarUrl,
+  onAvatarChange 
+}: ProfileHeaderProps) => {
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     toast({
@@ -46,6 +56,19 @@ const ProfileHeader = ({ profileData, isEditing, onEditToggle, onSave }: Profile
       description: "Profile updated successfully",
     });
     onSave();
+  };
+
+  const handleAvatarClick = () => {
+    if (isEditing && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && onAvatarChange) {
+      onAvatarChange(file);
+    }
   };
 
   // Generate initials from first and last name, or use first two letters of email if no name
@@ -67,14 +90,26 @@ const ProfileHeader = ({ profileData, isEditing, onEditToggle, onSave }: Profile
         <div className="flex items-center space-x-6">
           <div className="relative">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="/placeholder-avatar.jpg" />
+              <AvatarImage src={avatarUrl} />
               <AvatarFallback className="text-2xl">
                 {getInitials()}
               </AvatarFallback>
             </Avatar>
-            <Button size="sm" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0">
+            <Button 
+              size="sm" 
+              className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+              onClick={handleAvatarClick}
+              disabled={!isEditing}
+            >
               <Camera className="h-4 w-4" />
             </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
           
           <div className="flex-1">

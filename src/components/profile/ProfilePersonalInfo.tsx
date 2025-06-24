@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ProfileData {
   firstName: string;
@@ -88,17 +89,26 @@ const ProfilePersonalInfo = ({ profileData, isEditing, onProfileDataChange }: Pr
               onChange={(e) => onProfileDataChange({...profileData, jobTitle: e.target.value})}
             />
           </div>
+          <div>
+            <Label htmlFor="company">Company</Label>
+            <Input
+              id="company"
+              value={profileData.company}
+              disabled={!isEditing}
+              onChange={(e) => onProfileDataChange({...profileData, company: e.target.value})}
+            />
+          </div>
         </div>
         
         <div className="mt-6">
           <Label htmlFor="bio">Professional Summary</Label>
-          <textarea
+          <Textarea
             id="bio"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm disabled:bg-gray-50 disabled:text-gray-500"
             rows={4}
             value={profileData.bio}
             disabled={!isEditing}
             onChange={(e) => onProfileDataChange({...profileData, bio: e.target.value})}
+            className="mt-1"
           />
         </div>
       </CardContent>

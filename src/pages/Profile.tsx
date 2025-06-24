@@ -7,14 +7,19 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { profileService, UpdateProfileData } from "@/services/profileService";
+import { useToast } from "@/hooks/use-toast";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
 
   // User profile state that gets populated from auth
   const [profileData, setProfileData] = useState({
@@ -56,15 +61,74 @@ const Profile = () => {
         documentsVerified: userProfile.documents_verified || 0,
         totalDocuments: userProfile.total_documents || 0
       });
+
+      // Set avatar URL if exists
+      if (user.id) {
+        setAvatarUrl(`https://mjaqvbuhnhatofwkgako.supabase.co/storage/v1/object/public/avatars/avatars/${user.id}.jpg`);
+      }
     }
   }, [userProfile, user]);
 
-  const handleSave = () => {
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!user) return;
+
+    setIsLoading(true);
+    
+    const updateData: UpdateProfileData = {
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
+      email: profileData.email,
+      phone: profileData.phone,
+      location: profileData.location,
+      jobTitle: profileData.jobTitle,
+      company: profileData.company,
+      bio: profileData.bio
+    };
+
+    const { error } = await profileService.updateProfile(user.id, updateData);
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
+      setIsEditing(false);
+    }
+    
+    setIsLoading(false);
   };
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleAvatarChange = async (file: File) => {
+    if (!user) return;
+
+    setIsLoading(true);
+    const { avatarUrl: newAvatarUrl, error } = await profileService.uploadAvatar(user.id, file);
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    } else if (newAvatarUrl) {
+      setAvatarUrl(newAvatarUrl);
+      toast({
+        title: "Success",
+        description: "Avatar updated successfully",
+      });
+    }
+    
+    setIsLoading(false);
   };
 
   // Show loading or redirect if not authenticated
@@ -109,6 +173,8 @@ const Profile = () => {
           isEditing={isEditing}
           onEditToggle={handleEditToggle}
           onSave={handleSave}
+          avatarUrl={avatarUrl}
+          onAvatarChange={handleAvatarChange}
         />
 
         <ProfileTabs 
