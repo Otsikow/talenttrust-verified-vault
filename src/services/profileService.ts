@@ -17,19 +17,24 @@ class ProfileService {
     try {
       console.log('Updating profile for user:', userId, 'with data:', data);
       
+      // Ensure we have clean data with fallbacks for empty strings
+      const updateData = {
+        full_name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+        email: data.email || '',
+        phone: data.phone || '',
+        location: data.location || '',
+        job_title: data.jobTitle || '',
+        company: data.company || '',
+        bio: data.bio || '',
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Prepared update data:', updateData);
+
       // Update the users table with the new profile data
       const { error } = await supabase
         .from('users')
-        .update({
-          full_name: `${data.firstName} ${data.lastName}`.trim(),
-          email: data.email,
-          phone: data.phone,
-          location: data.location,
-          job_title: data.jobTitle,
-          company: data.company,
-          bio: data.bio,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('auth_id', userId);
 
       if (error) {
@@ -95,7 +100,7 @@ class ProfileService {
         return { error: error.message };
       }
 
-      // If no profile exists, create one
+      // If no profile exists, create one with default values
       if (!data) {
         console.log('No profile found, creating default profile');
         const { data: newProfile, error: createError } = await supabase
@@ -103,6 +108,12 @@ class ProfileService {
           .insert({
             auth_id: userId,
             email: '',
+            full_name: '',
+            phone: '',
+            location: '',
+            job_title: '',
+            company: '',
+            bio: '',
             user_type: 'job_seeker'
           })
           .select()
