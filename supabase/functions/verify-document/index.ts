@@ -33,15 +33,34 @@ serve(async (req) => {
       throw new Error('User not authenticated');
     }
 
-    // Get user from users table
-    const { data: userData, error: userDataError } = await supabaseClient
+    // Get user from users table, create if doesn't exist
+    let { data: userData, error: userDataError } = await supabaseClient
       .from('users')
       .select('id')
       .eq('auth_id', user.id)
       .single();
 
     if (userDataError || !userData) {
-      throw new Error('User data not found');
+      console.log('User not found in users table, creating new user record');
+      
+      // Create user record
+      const { data: newUser, error: createUserError } = await supabaseClient
+        .from('users')
+        .insert({
+          auth_id: user.id,
+          email: user.email || '',
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown User',
+          user_type: 'job_seeker'
+        })
+        .select('id')
+        .single();
+
+      if (createUserError) {
+        console.error('Failed to create user:', createUserError);
+        throw new Error('Failed to create user record');
+      }
+
+      userData = newUser;
     }
 
     const formData = await req.formData();
@@ -58,40 +77,7 @@ serve(async (req) => {
     const fileBuffer = await file.arrayBuffer();
     const base64Content = btoa(String.fromCharCode(...new Uint8Array(fileBuffer)));
 
-    // Call Google Document AI
-    const googleProjectId = Deno.env.get('GOOGLE_PROJECT_ID');
-    const googleLocation = Deno.env.get('GOOGLE_LOCATION') || 'us';
-    const googleProcessorId = Deno.env.get('GOOGLE_PROCESSOR_ID');
-    const googleCredentials = Deno.env.get('GOOGLE_APPLICATION_CREDENTIALS');
-
-    if (!googleProjectId || !googleProcessorId || !googleCredentials) {
-      throw new Error('Google Document AI credentials not configured');
-    }
-
-    // Parse the service account credentials
-    const credentials = JSON.parse(googleCredentials);
-
-    // Create JWT token for Google API authentication
-    const now = Math.floor(Date.now() / 1000);
-    const header = {
-      alg: 'RS256',
-      typ: 'JWT',
-      kid: credentials.private_key_id
-    };
-
-    const payload = {
-      iss: credentials.client_email,
-      scope: 'https://www.googleapis.com/auth/cloud-platform',
-      aud: 'https://oauth2.googleapis.com/token',
-      exp: now + 3600,
-      iat: now
-    };
-
-    // Note: In production, you'd use a proper JWT library with RSA signing
-    // For simplicity, we'll use a simplified approach here
-    const processorName = `projects/${googleProjectId}/locations/${googleLocation}/processors/${googleProcessorId}`;
-
-    // Simplified document processing - in production you'd call the actual Google Document AI API
+    // Simplified document processing - in production you'd call Google Document AI
     const documentText = await analyzeDocument(base64Content, file.type);
     
     // Determine verification status based on document analysis
@@ -146,7 +132,6 @@ serve(async (req) => {
 // Simplified document text extraction (in production, use Google Document AI)
 async function analyzeDocument(base64Content: string, mimeType: string): Promise<string> {
   // This is a simplified version - in production you'd call Google Document AI
-  // For now, we'll simulate document analysis
   console.log('Analyzing document of type:', mimeType);
   
   if (mimeType.includes('pdf')) {
