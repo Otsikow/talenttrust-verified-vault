@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,8 @@ import {
   Trash2,
   Plus,
   Search,
-  Filter
+  Filter,
+  Camera
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,6 +28,8 @@ const DocumentVault = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [uploadMethod, setUploadMethod] = useState<"file" | "camera">("file");
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   // Mock documents data
   const [documents] = useState([
@@ -134,6 +136,35 @@ const DocumentVault = () => {
       title: "Document Shared",
       description: "Document sharing link has been copied to your clipboard.",
     });
+  };
+
+  const handleCameraCapture = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setCapturedImage(e.target?.result as string);
+          toast({
+            title: "Photo Captured",
+            description: "Document photo captured successfully. Fill in the details below.",
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    
+    input.click();
+  };
+
+  const resetUploadForm = () => {
+    setUploadMethod("file");
+    setCapturedImage(null);
   };
 
   const filteredDocuments = documents.filter(doc => {
@@ -265,7 +296,7 @@ const DocumentVault = () => {
                 </Select>
               </div>
               
-              <Dialog>
+              <Dialog onOpenChange={() => resetUploadForm()}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -280,10 +311,63 @@ const DocumentVault = () => {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="file">Select File</Label>
-                      <Input id="file" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+                    {/* Upload Method Selection */}
+                    <div className="space-y-2">
+                      <Label>Upload Method</Label>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant={uploadMethod === "file" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setUploadMethod("file")}
+                          className="flex-1"
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          File Upload
+                        </Button>
+                        <Button 
+                          variant={uploadMethod === "camera" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setUploadMethod("camera")}
+                          className="flex-1"
+                        >
+                          <Camera className="h-4 w-4 mr-2" />
+                          Camera
+                        </Button>
+                      </div>
                     </div>
+
+                    {/* File Upload or Camera Capture */}
+                    <div>
+                      <Label htmlFor="file">
+                        {uploadMethod === "file" ? "Select File" : "Capture Document"}
+                      </Label>
+                      {uploadMethod === "file" ? (
+                        <Input id="file" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+                      ) : (
+                        <div className="space-y-2">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={handleCameraCapture}
+                            className="w-full"
+                          >
+                            <Camera className="h-4 w-4 mr-2" />
+                            Take Photo
+                          </Button>
+                          {capturedImage && (
+                            <div className="mt-2">
+                              <img 
+                                src={capturedImage} 
+                                alt="Captured document" 
+                                className="w-full h-32 object-cover rounded-md border"
+                              />
+                              <p className="text-sm text-green-600 mt-1">✓ Document captured</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
                     <div>
                       <Label htmlFor="docName">Document Name</Label>
                       <Input id="docName" placeholder="e.g., Bachelor's Degree in Computer Science" />
