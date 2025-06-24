@@ -165,14 +165,14 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
 
   return (
     <div className="border rounded-lg p-4 sm:p-6 hover:border-blue-200 transition-colors">
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 space-y-4 sm:space-y-0">
-        <div className="flex items-start space-x-3 sm:space-x-4">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
           <div className={`p-2 sm:p-3 rounded-lg ${getStatusColor(document.status)} flex-shrink-0`}>
             {getStatusIcon(document.status)}
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-base sm:text-lg text-gray-900 break-words">{document.name}</h3>
-            <p className="text-sm sm:text-base text-gray-600 break-words">{document.issuer}</p>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-base sm:text-lg text-gray-900 truncate pr-2">{document.name}</h3>
+            <p className="text-sm sm:text-base text-gray-600 truncate pr-2">{document.issuer}</p>
             <div className="flex flex-wrap items-center gap-2 mt-2">
               <Badge className={`${getTypeColor(document.type)} text-xs`}>
                 {document.type.replace('_', ' ')}
@@ -190,14 +190,14 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
           </div>
         </div>
         
-        <div className="flex flex-wrap items-center gap-2 sm:space-x-2">
+        <div className="flex items-center gap-2 flex-shrink-0 ml-4">
           <Button variant="outline" size="sm" onClick={handleDownloadDocument} className="text-xs sm:text-sm">
-            <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
             <span className="hidden sm:inline">Download</span>
           </Button>
           {document.status === "verified" && (
             <Button variant="outline" size="sm" onClick={handleShareDocument} className="text-xs sm:text-sm">
-              <Share className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <Share className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
               <span className="hidden sm:inline">Share</span>
             </Button>
           )}
@@ -205,11 +205,11 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
             <Button 
               size="sm" 
               onClick={handleVerifyDocument}
-              className="text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 whitespace-nowrap"
             >
-              <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Verify with TalentTrust</span>
-              <span className="sm:hidden">Verify</span>
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden lg:inline">Verify with TrustTalent</span>
+              <span className="lg:hidden">Verify</span>
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={handleDeleteDocument} className="text-red-600 hover:text-red-700">
@@ -251,7 +251,7 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
         <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-xs sm:text-sm text-yellow-700">
             <Clock className="h-4 w-4 inline mr-2" />
-            Verification in progress. TalentTrust AI is currently verifying this document. 
+            Verification in progress. TrustTalent AI is currently verifying this document. 
             You'll be notified when complete.
           </p>
         </div>
@@ -261,7 +261,7 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-xs sm:text-sm text-blue-700">
             <Zap className="h-4 w-4 inline mr-2" />
-            Ready for verification. Click "Verify with TalentTrust" to start AI-powered credential verification.
+            Ready for verification. Click "Verify with TrustTalent" to start AI-powered credential verification.
           </p>
         </div>
       )}
