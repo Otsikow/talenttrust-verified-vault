@@ -12,21 +12,21 @@ export const useAuthSession = () => {
 
     const initializeAuth = async () => {
       try {
-        console.log('Initializing auth...');
+        console.log('useAuthSession: Initializing auth...');
         
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('Error getting session:', error);
+          console.error('useAuthSession: Error getting session:', error);
         }
         
         if (mounted) {
-          console.log('Initial session:', session?.user?.id || 'No session');
+          console.log('useAuthSession: Initial session:', session?.user?.id || 'No session');
           setUser(session?.user ?? null);
           setLoading(false);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('useAuthSession: Error initializing auth:', error);
         if (mounted) {
           setLoading(false);
         }
@@ -35,7 +35,7 @@ export const useAuthSession = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+        console.log('useAuthSession: Auth state changed:', event, session?.user?.id);
         
         if (mounted) {
           setUser(session?.user ?? null);

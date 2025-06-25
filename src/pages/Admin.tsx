@@ -18,42 +18,56 @@ const Admin = () => {
   const { stats, loading: statsLoading, refreshStats } = useAdminData();
 
   useEffect(() => {
-    checkAdminStatus();
-  }, [user]);
-
-  const checkAdminStatus = async () => {
-    if (!user) return;
-
-    try {
-      // Get user from users table
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_id', user.id)
-        .single();
-
-      if (userError || !userData) {
+    const checkAdminStatus = async () => {
+      if (!user) {
         setIsAdmin(false);
+        setCheckingAdmin(false);
         return;
       }
 
-      // Check if user has admin role
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userData.id)
-        .eq('role', 'admin')
-        .single();
+      try {
+        console.log('Checking admin status for user:', user.id);
+        
+        // Get user from users table
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .single();
 
-      setIsAdmin(!roleError && !!roleData);
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      setIsAdmin(false);
-    } finally {
-      setCheckingAdmin(false);
-    }
-  };
+        if (userError || !userData) {
+          console.log('User not found in users table:', userError);
+          setIsAdmin(false);
+          setCheckingAdmin(false);
+          return;
+        }
 
+        console.log('Found user in users table:', userData.id);
+
+        // Check if user has admin role
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userData.id)
+          .eq('role', 'admin')
+          .single();
+
+        const hasAdminRole = !roleError && !!roleData;
+        console.log('Admin role check result:', hasAdminRole, roleError);
+        
+        setIsAdmin(hasAdminRole);
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      } finally {
+        setCheckingAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
+
+  // Show loading screen while checking authentication and admin status
   if (loading || checkingAdmin) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
@@ -65,9 +79,13 @@ const Admin = () => {
     );
   }
 
+  // Redirect if not authenticated or not admin
   if (!user || !isAdmin) {
+    console.log('Redirecting to login - user:', !!user, 'isAdmin:', isAdmin);
     return <Navigate to="/login" replace />;
   }
+
+  console.log('Rendering admin dashboard for user:', user.id);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
