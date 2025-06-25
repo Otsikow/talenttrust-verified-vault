@@ -5,7 +5,7 @@ import { getUserDbId } from '@/utils/userUtils';
 import { SkillsService, Skill } from '@/services/skillsService';
 import { QualificationsService, Qualification } from '@/services/qualificationsService';
 
-export { Skill, Qualification };
+export type { Skill, Qualification };
 
 export const useSkillsManagement = (userId?: string) => {
   const { toast } = useToast();
