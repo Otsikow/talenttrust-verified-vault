@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,12 +31,24 @@ const Login = () => {
 
   const logoSrc = "/lovable-uploads/353f8749-04ef-4886-91d8-8fd0ad698158.png";
 
+  // Add debugging
+  useEffect(() => {
+    console.log('Login component - loading:', loading, 'user:', user?.id || 'no user');
+  }, [loading, user]);
+
   // Redirect if already logged in
   useEffect(() => {
     if (user && !loading) {
+      console.log('User logged in, redirecting to dashboard');
       navigate("/dashboard/seeker");
     }
   }, [user, loading, navigate]);
+
+  // Show loading screen only during initial auth check
+  if (loading) {
+    console.log('Showing loading screen');
+    return <LoadingScreen logoSrc={logoSrc} />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,9 +138,7 @@ const Login = () => {
     setError(null);
   };
 
-  if (loading) {
-    return <LoadingScreen logoSrc={logoSrc} />;
-  }
+  console.log('Rendering login form');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
