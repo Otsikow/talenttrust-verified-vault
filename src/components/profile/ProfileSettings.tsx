@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,11 +25,34 @@ const ProfileSettings = () => {
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Account Settings</h2>
         <p className="text-gray-600 mb-6">Manage your account preferences and security</p>
         
-        <div className="space-y-6">
-          <PrivacySettingsCard />
-          <NotificationSettingsCard />
-          <SecuritySettingsCard />
-        </div>
+        <Accordion type="multiple" className="space-y-4">
+          <AccordionItem value="privacy">
+            <AccordionTrigger className="text-lg font-semibold">
+              Privacy Settings
+            </AccordionTrigger>
+            <AccordionContent>
+              <PrivacySettingsCard />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="notifications">
+            <AccordionTrigger className="text-lg font-semibold">
+              Notification Preferences
+            </AccordionTrigger>
+            <AccordionContent>
+              <NotificationSettingsCard />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="security">
+            <AccordionTrigger className="text-lg font-semibold">
+              Security Settings
+            </AccordionTrigger>
+            <AccordionContent>
+              <SecuritySettingsCard />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
 
       {/* Account Actions Section */}
