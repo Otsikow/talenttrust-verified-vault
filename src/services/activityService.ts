@@ -4,7 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 export class ActivityService {
   static async logActivity(userId: string, action: string, details: string, activityType: string = 'general') {
     try {
-      const { error } = await supabase
+      // Use any to bypass TypeScript checking for the new table
+      const { error } = await (supabase as any)
         .from('user_activities')
         .insert({
           user_id: userId,

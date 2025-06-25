@@ -20,7 +20,8 @@ export const useUserActivity = () => {
     if (!user) return;
     
     try {
-      const { data, error } = await supabase
+      // Use any to bypass TypeScript checking for the new table
+      const { data, error } = await (supabase as any)
         .from('user_activities')
         .select('*')
         .eq('user_id', user.id)
@@ -43,7 +44,8 @@ export const useUserActivity = () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
+      // Use any to bypass TypeScript checking for the new table
+      const { error } = await (supabase as any)
         .from('user_activities')
         .insert({
           user_id: user.id,
