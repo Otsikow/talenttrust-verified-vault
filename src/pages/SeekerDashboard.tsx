@@ -10,25 +10,26 @@ import {
   Star,
   TrendingUp,
   Bell,
-  User
+  User,
+  RefreshCw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 import { useEffect, useState } from "react";
 import MobileNavigation from "@/components/navigation/MobileNavigation";
 
 const SeekerDashboard = () => {
   const navigate = useNavigate();
-  const { user, userProfile, refreshProfile } = useAuth();
+  const { 
+    user, 
+    userProfile, 
+    stats, 
+    isRefreshing, 
+    refreshAllData 
+  } = useUnifiedDashboardData();
+  
   const [displayName, setDisplayName] = useState("Your Name");
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
-
-  useEffect(() => {
-    // Refresh profile data when component mounts to get latest document counts
-    if (user) {
-      refreshProfile();
-    }
-  }, [user, refreshProfile]);
 
   useEffect(() => {
     if (userProfile && user) {
@@ -64,11 +65,11 @@ const SeekerDashboard = () => {
     return null;
   }
 
-  const stats = [
-    { label: "Documents Uploaded", value: userProfile?.total_documents || 0, icon: FileText },
-    { label: "Verification Score", value: `${userProfile?.verification_score || 0}%`, icon: Shield },
-    { label: "Applications Sent", value: 12, icon: Briefcase },
-    { label: "Profile Views", value: 48, icon: TrendingUp },
+  const dashboardStats = [
+    { label: "Documents Uploaded", value: stats.totalDocuments, icon: FileText },
+    { label: "Verification Score", value: `${stats.verificationScore}%`, icon: Shield },
+    { label: "Applications Sent", value: stats.applicationsent, icon: Briefcase },
+    { label: "Profile Views", value: stats.profileViews, icon: TrendingUp },
   ];
 
   const recentActivity = [
@@ -109,6 +110,16 @@ const SeekerDashboard = () => {
                 <Bell className="h-4 w-4" />
                 <span className="sr-only">Notifications</span>
               </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={refreshAllData}
+                disabled={isRefreshing}
+                className="hidden sm:flex"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <span className="sr-only">Refresh</span>
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="hidden sm:flex items-center space-x-2">
                 <Avatar className="h-6 w-6">
                   <AvatarImage src={avatarUrl} />
@@ -126,15 +137,29 @@ const SeekerDashboard = () => {
       <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Welcome Section */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {displayName.split(' ')[0] || displayName}!
-          </h1>
-          <p className="text-gray-600 text-sm sm:text-base">Here's what's happening with your job search today.</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Welcome back, {displayName.split(' ')[0] || displayName}!
+              </h1>
+              <p className="text-gray-600 text-sm sm:text-base">Here's what's happening with your job search today.</p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={refreshAllData}
+              disabled={isRefreshing}
+              className="sm:hidden"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          {stats.map((stat, index) => (
+          {dashboardStats.map((stat, index) => (
             <Card key={index} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
@@ -217,15 +242,22 @@ const SeekerDashboard = () => {
           <CardContent>
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium">Progress</span>
-              <span className="text-sm text-gray-600">75%</span>
+              <span className="text-sm text-gray-600">
+                {stats.totalDocuments > 0 ? Math.min(75 + (stats.totalDocuments * 5), 100) : 25}%
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-              <div className="bg-blue-600 h-2 rounded-full transition-all duration-500" style={{ width: '75%' }}></div>
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
+                style={{ width: `${stats.totalDocuments > 0 ? Math.min(75 + (stats.totalDocuments * 5), 100) : 25}%` }}
+              ></div>
             </div>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className="text-xs">✓ Basic Info</Badge>
               <Badge variant="outline" className="text-xs">✓ Work Experience</Badge>
-              <Badge variant="outline" className="text-xs">Education</Badge>
+              <Badge variant={stats.totalDocuments > 0 ? "outline" : "secondary"} className="text-xs">
+                {stats.totalDocuments > 0 ? "✓" : ""} Documents ({stats.totalDocuments})
+              </Badge>
               <Badge variant="secondary" className="text-xs">Skills</Badge>
             </div>
           </CardContent>

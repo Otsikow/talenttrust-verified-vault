@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Upload, FileText, Shield, Eye, Download, Trash2, Search } from "lucide-react";
+import { Plus, Upload, FileText, Shield, Eye, Download, Trash2, Search, RefreshCw } from "lucide-react";
 import DocumentVaultHeader from "@/components/vault/DocumentVaultHeader";
 import UploadDialog from "@/components/vault/UploadDialog";
 import DocumentStats from "@/components/vault/DocumentStats";
@@ -12,7 +12,7 @@ import DocumentList from "@/components/vault/DocumentList";
 import DocumentControls from "@/components/vault/DocumentControls";
 import VerifyDocumentsDialog from "@/components/vault/VerifyDocumentsDialog";
 import SharePortfolioDialog from "@/components/vault/SharePortfolioDialog";
-import { useDocuments } from "@/hooks/useDocuments";
+import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 
 const DocumentVault = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
@@ -21,7 +21,8 @@ const DocumentVault = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
-  const { documents, loading } = useDocuments();
+  
+  const { documents, isRefreshing, refreshAllData } = useUnifiedDashboardData();
 
   // Filter documents based on search and filters
   const filteredDocuments = documents.filter(doc => {
@@ -41,6 +42,12 @@ const DocumentVault = () => {
     setIsShareDialogOpen(true);
   };
 
+  const handleUploadComplete = () => {
+    setIsUploadDialogOpen(false);
+    // Refresh all data to ensure Dashboard and Vault stay in sync
+    refreshAllData();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <DocumentVaultHeader />
@@ -52,14 +59,25 @@ const DocumentVault = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Document Vault</h1>
             <p className="text-gray-600 text-sm sm:text-base">Securely store and manage your professional documents</p>
           </div>
-          <Button 
-            onClick={() => setIsUploadDialogOpen(true)}
-            className="flex items-center space-x-2 w-full sm:w-auto"
-            size="default"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Upload Document</span>
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={refreshAllData}
+              disabled={isRefreshing}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button 
+              onClick={() => setIsUploadDialogOpen(true)}
+              className="flex items-center space-x-2 w-full sm:w-auto"
+              size="default"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Upload Document</span>
+            </Button>
+          </div>
         </div>
 
         {/* Stats Section */}
@@ -181,7 +199,7 @@ const DocumentVault = () => {
         {/* Upload Dialog */}
         <UploadDialog 
           isOpen={isUploadDialogOpen} 
-          onClose={() => setIsUploadDialogOpen(false)} 
+          onClose={handleUploadComplete}
         />
 
         {/* Verify Documents Dialog */}
