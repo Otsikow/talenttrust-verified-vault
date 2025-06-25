@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,9 @@ import {
   Building,
   User,
   Bell,
-  MapPin
+  MapPin,
+  Plus,
+  Briefcase
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -69,6 +70,10 @@ const EmployerDashboard = () => {
             </nav>
           </div>
           <div className="flex items-center space-x-4">
+            <Button onClick={() => navigate("/post-job")} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Post Job
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
               <span className="sr-only">Notifications</span>
               <Bell className="h-4 w-4" />
@@ -84,9 +89,51 @@ const EmployerDashboard = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Employer Dashboard</h1>
-          <p className="text-gray-600">Welcome back! Manage your job postings and find top talent.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Employer Dashboard</h1>
+            <p className="text-gray-600">Welcome back! Manage your job postings and find top talent.</p>
+          </div>
+          <Button onClick={() => navigate("/post-job")} size="lg" className="bg-blue-600 hover:bg-blue-700">
+            <Briefcase className="h-5 w-5 mr-2" />
+            Post New Job
+          </Button>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Button 
+            variant="outline" 
+            className="h-20 flex-col space-y-2"
+            onClick={() => navigate("/post-job")}
+          >
+            <Plus className="h-6 w-6" />
+            <span>Post Job</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-20 flex-col space-y-2"
+            onClick={() => navigate("/jobs")}
+          >
+            <Search className="h-6 w-6" />
+            <span>Find Talent</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-20 flex-col space-y-2"
+            onClick={() => navigate("/messages")}
+          >
+            <Users className="h-6 w-6" />
+            <span>Messages</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-20 flex-col space-y-2"
+            onClick={() => navigate("/vault")}
+          >
+            <FileText className="h-6 w-6" />
+            <span>Documents</span>
+          </Button>
         </div>
 
         {/* Dashboard Cards */}

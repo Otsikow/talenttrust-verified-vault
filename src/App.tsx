@@ -15,6 +15,7 @@ import EmployerDashboard from "./pages/EmployerDashboard";
 import UniversityDashboard from "./pages/UniversityDashboard";
 import DocumentVault from "./pages/DocumentVault";
 import FindJobs from "./pages/FindJobs";
+import PostJob from "./pages/PostJob";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/dashboard/university" element={<UniversityDashboard />} />
             <Route path="/vault" element={<DocumentVault />} />
             <Route path="/jobs" element={<FindJobs />} />
+            <Route path="/post-job" element={<PostJob />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<Profile />} />
