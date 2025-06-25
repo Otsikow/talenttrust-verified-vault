@@ -100,13 +100,6 @@ export const useProfileData = () => {
       } else if (profile) {
         console.log('Profile fetched successfully:', profile);
         loadProfileData(profile);
-      } else {
-        console.log('No profile found, using default values');
-        setProfileData(prev => ({
-          ...prev,
-          email: user.email || ''
-        }));
-        setProfileError(null);
       }
     } catch (error) {
       console.error('Unexpected error fetching profile:', error);
@@ -176,13 +169,13 @@ export const useProfileData = () => {
           variant: "destructive",
         });
       } else {
-        console.log('Profile saved successfully, refreshing profile data...');
+        console.log('Profile saved successfully');
         
-        // Refresh the profile data from auth context
-        await refreshProfile();
-        
-        // Also fetch the updated profile directly to ensure form reflects changes
-        await fetchProfileDirectly();
+        // Refresh the profile data from auth context and directly
+        await Promise.all([
+          refreshProfile(),
+          fetchProfileDirectly()
+        ]);
         
         toast({
           title: "Success",
@@ -203,12 +196,6 @@ export const useProfileData = () => {
   };
 
   const handleEditToggle = () => {
-    if (isEditing) {
-      // If canceling edit, reload the original data
-      if (userProfile) {
-        loadProfileData(userProfile);
-      }
-    }
     setIsEditing(!isEditing);
   };
 
@@ -239,12 +226,14 @@ export const useProfileData = () => {
   useEffect(() => {
     console.log('Profile component mounted - user:', user?.id, 'userProfile:', userProfile, 'authLoading:', authLoading);
     
-    if (!authLoading && user && userProfile) {
-      console.log('Loading profile data from userProfile:', userProfile);
-      loadProfileData(userProfile);
-    } else if (!authLoading && user && !userProfile) {
-      console.log('User exists but no profile data, attempting to fetch...');
-      fetchProfileDirectly();
+    if (!authLoading && user) {
+      if (userProfile) {
+        console.log('Loading profile data from userProfile:', userProfile);
+        loadProfileData(userProfile);
+      } else {
+        console.log('User exists but no profile data, attempting to fetch...');
+        fetchProfileDirectly();
+      }
     } else if (!authLoading && !user) {
       console.log('No user found, redirecting to login');
       navigate("/login", { replace: true });

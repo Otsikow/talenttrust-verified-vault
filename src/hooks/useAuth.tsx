@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -76,6 +75,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       const result = await authService.login({ email, password });
+      if (result.user && !result.error) {
+        // Profile will be fetched by the auth state listener
+        console.log('Login successful, user:', result.user.id);
+      }
       return result;
     } catch (error: any) {
       console.error('Login error:', error);
@@ -127,12 +130,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(session?.user ?? null);
           
           if (session?.user) {
-            // Defer profile fetch to avoid blocking initial render
-            setTimeout(() => {
-              if (mounted) {
-                fetchUserProfile(session.user.id);
-              }
-            }, 0);
+            // Fetch profile immediately if we have a session
+            await fetchUserProfile(session.user.id);
           }
           
           // Set loading to false after initial check
@@ -155,12 +154,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(session?.user ?? null);
           
           if (session?.user) {
-            // Defer profile fetch to avoid auth state callback issues
-            setTimeout(() => {
-              if (mounted) {
-                fetchUserProfile(session.user.id);
-              }
-            }, 0);
+            // Fetch profile when user logs in
+            await fetchUserProfile(session.user.id);
           } else {
             setUserProfile(null);
           }

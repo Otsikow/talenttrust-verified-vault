@@ -91,27 +91,31 @@ class ProfileService {
     try {
       console.log('Fetching profile for user:', userId);
       
-      // Use maybeSingle() to handle cases with multiple or no rows
+      // Use single() to get one row, but handle the case where no row exists
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('auth_id', userId)
-        .maybeSingle();
+        .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Profile fetch error:', error);
         return { error: error.message };
       }
 
-      // If no profile exists, create one with default values
-      if (!data) {
+      // If no profile exists (PGRST116 error), create one with default values
+      if (!data || error?.code === 'PGRST116') {
         console.log('No profile found, creating default profile');
+        
+        // Get user data from auth to populate email
+        const { data: { user } } = await supabase.auth.getUser();
+        
         const { data: newProfile, error: createError } = await supabase
           .from('users')
           .insert({
             auth_id: userId,
-            email: '',
-            full_name: '',
+            email: user?.email || '',
+            full_name: user?.user_metadata?.full_name || '',
             phone: '',
             location: '',
             job_title: '',
