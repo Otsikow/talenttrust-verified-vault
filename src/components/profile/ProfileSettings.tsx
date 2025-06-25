@@ -13,10 +13,8 @@ const ProfileSettings = () => {
   const { logout } = useAuth();
 
   const handleLogout = async () => {
-    if (confirm("Are you sure you want to sign out?")) {
-      await logout();
-      navigate("/");
-    }
+    await logout();
+    navigate("/");
   };
 
   return (
