@@ -30,13 +30,20 @@ export const useSkillsManagement = (userId?: string) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('user_skills')
+        .from('user_skills' as any)
         .select('*')
         .eq('user_id', userId);
 
       if (error) throw error;
       
-      setSkills(data || []);
+      const skillsData = (data || []).map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        verified: item.verified || false,
+        category: item.category
+      }));
+      
+      setSkills(skillsData);
     } catch (error) {
       console.error('Error loading skills:', error);
       toast({
@@ -55,13 +62,21 @@ export const useSkillsManagement = (userId?: string) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('user_qualifications')
+        .from('user_qualifications' as any)
         .select('*')
         .eq('user_id', userId);
 
       if (error) throw error;
       
-      setQualifications(data || []);
+      const qualificationsData = (data || []).map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        institution: item.institution,
+        verified: item.verified || false,
+        dateObtained: item.date_obtained
+      }));
+      
+      setQualifications(qualificationsData);
     } catch (error) {
       console.error('Error loading qualifications:', error);
       toast({
@@ -79,7 +94,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { data, error } = await supabase
-        .from('user_skills')
+        .from('user_skills' as any)
         .insert({
           user_id: userId,
           name: skillName,
@@ -91,7 +106,14 @@ export const useSkillsManagement = (userId?: string) => {
 
       if (error) throw error;
 
-      setSkills(prev => [...prev, data]);
+      const newSkill: Skill = {
+        id: data.id,
+        name: data.name,
+        verified: data.verified || false,
+        category: data.category
+      };
+
+      setSkills(prev => [...prev, newSkill]);
       toast({
         title: "Success",
         description: "Skill added successfully",
@@ -111,7 +133,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { error } = await supabase
-        .from('user_skills')
+        .from('user_skills' as any)
         .delete()
         .eq('id', skillId)
         .eq('user_id', userId);
@@ -138,7 +160,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { data, error } = await supabase
-        .from('user_qualifications')
+        .from('user_qualifications' as any)
         .insert({
           user_id: userId,
           title: qualification.title,
@@ -151,13 +173,15 @@ export const useSkillsManagement = (userId?: string) => {
 
       if (error) throw error;
 
-      setQualifications(prev => [...prev, {
+      const newQualification: Qualification = {
         id: data.id,
         title: data.title,
         institution: data.institution,
-        verified: data.verified,
+        verified: data.verified || false,
         dateObtained: data.date_obtained
-      }]);
+      };
+
+      setQualifications(prev => [...prev, newQualification]);
       
       toast({
         title: "Success",
@@ -178,7 +202,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { error } = await supabase
-        .from('user_qualifications')
+        .from('user_qualifications' as any)
         .delete()
         .eq('id', qualificationId)
         .eq('user_id', userId);
