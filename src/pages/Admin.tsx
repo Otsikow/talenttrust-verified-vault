@@ -4,14 +4,18 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import VerificationManagement from '@/components/admin/VerificationManagement';
-import { Shield, Users, FileText, AlertTriangle } from 'lucide-react';
+import AdminStatsCards from '@/components/admin/AdminStatsCards';
+import { Shield, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAdminData } from '@/hooks/useAdminData';
 
 const Admin = () => {
   const { user, loading } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const { stats, loading: statsLoading, refreshStats } = useAdminData();
 
   useEffect(() => {
     checkAdminStatus();
@@ -68,69 +72,47 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage document verifications and system settings</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+            <p className="text-gray-600">Manage document verifications and system settings</p>
+          </div>
+          <Button
+            onClick={refreshStats}
+            disabled={statsLoading}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${statsLoading ? 'animate-spin' : ''}`} />
+            Refresh Stats
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Verifications</p>
-                  <p className="text-2xl font-bold text-gray-900">-</p>
-                </div>
-                <FileText className="h-10 w-10 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-600">Verified</p>
-                  <p className="text-2xl font-bold text-green-700">-</p>
-                </div>
-                <Shield className="h-10 w-10 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-yellow-600">Pending Review</p>
-                  <p className="text-2xl font-bold text-yellow-700">-</p>
-                </div>
-                <AlertTriangle className="h-10 w-10 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Active Users</p>
-                  <p className="text-2xl font-bold text-gray-900">-</p>
-                </div>
-                <Users className="h-10 w-10 text-gray-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <AdminStatsCards stats={stats} />
 
         <Tabs defaultValue="verifications" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="verifications">Document Verifications</TabsTrigger>
+            <TabsTrigger value="users">User Management</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="verifications" className="mt-6">
-            <VerificationManagement />
+            <VerificationManagement onStatusUpdate={refreshStats} />
+          </TabsContent>
+          
+          <TabsContent value="users" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>
+                  Manage user accounts, roles, and permissions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">User management interface coming soon...</p>
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="settings" className="mt-6">
