@@ -43,6 +43,11 @@ export const useProfileData = () => {
         console.log('Profile fetched successfully:', profile);
         loadProfileData(profile);
         setProfileError(null);
+        
+        // Set avatar URL from profile if it exists
+        if (profile.avatar_url) {
+          setAvatarUrl(profile.avatar_url);
+        }
       }
     } catch (error) {
       console.error('Unexpected error fetching profile:', error);
@@ -93,6 +98,8 @@ export const useProfileData = () => {
       });
     } else if (newAvatarUrl) {
       setAvatarUrl(newAvatarUrl);
+      // Refresh profile to get updated data
+      await fetchProfileDirectly();
       toast({
         title: "Success",
         description: "Avatar updated successfully",
@@ -110,13 +117,14 @@ export const useProfileData = () => {
         console.log('Loading profile data from userProfile:', userProfile);
         loadProfileData(userProfile);
         setProfileError(null);
+        
+        // Set avatar URL from userProfile if it exists
+        if (userProfile.avatar_url) {
+          setAvatarUrl(userProfile.avatar_url);
+        }
       } else {
         console.log('User exists but no profile data, attempting to fetch...');
         fetchProfileDirectly();
-      }
-      
-      if (user?.id) {
-        setAvatarUrl(`https://mjaqvbuhnhatofwkgako.supabase.co/storage/v1/object/public/avatars/${user.id}/${user.id}.jpg`);
       }
     } else if (!authLoading && !user) {
       console.log('No user found, redirecting to login');

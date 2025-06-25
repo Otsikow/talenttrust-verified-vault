@@ -58,8 +58,7 @@ class ProfileService {
       
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}.${fileExt}`;
-      // Use the correct path structure that matches our RLS policy
-      const filePath = `${userId}/${fileName}`;
+      const filePath = fileName; // Simplified path structure
 
       console.log('Uploading to path:', filePath);
 
@@ -82,6 +81,21 @@ class ProfileService {
         .getPublicUrl(filePath);
 
       console.log('Avatar uploaded successfully:', data.publicUrl);
+      
+      // Update the user's profile with the avatar URL
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ 
+          avatar_url: data.publicUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq('auth_id', userId);
+
+      if (updateError) {
+        console.error('Error updating avatar URL in profile:', updateError);
+        // Still return success since upload worked
+      }
+
       return { avatarUrl: data.publicUrl };
     } catch (error: any) {
       console.error('Avatar upload error:', error);
