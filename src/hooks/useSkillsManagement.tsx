@@ -23,16 +23,51 @@ export const useSkillsManagement = (userId?: string) => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [qualifications, setQualifications] = useState<Qualification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userDbId, setUserDbId] = useState<string | null>(null);
+
+  // Get the user's database ID from the users table
+  const getUserDbId = async () => {
+    if (!userId) return null;
+    
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user database ID:', error);
+        return null;
+      }
+
+      return data?.id || null;
+    } catch (error) {
+      console.error('Error in getUserDbId:', error);
+      return null;
+    }
+  };
+
+  // Initialize user database ID
+  useEffect(() => {
+    const initializeUserDbId = async () => {
+      if (userId) {
+        const dbId = await getUserDbId();
+        setUserDbId(dbId);
+      }
+    };
+    initializeUserDbId();
+  }, [userId]);
 
   const loadSkills = async () => {
-    if (!userId) return;
+    if (!userDbId) return;
     
     setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('user_skills')
         .select('*')
-        .eq('user_id', userId);
+        .eq('user_id', userDbId);
 
       if (error) throw error;
       
@@ -57,14 +92,14 @@ export const useSkillsManagement = (userId?: string) => {
   };
 
   const loadQualifications = async () => {
-    if (!userId) return;
+    if (!userDbId) return;
     
     setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('user_qualifications')
         .select('*')
-        .eq('user_id', userId);
+        .eq('user_id', userDbId);
 
       if (error) throw error;
       
@@ -90,13 +125,20 @@ export const useSkillsManagement = (userId?: string) => {
   };
 
   const addSkill = async (skillName: string, category: 'technical' | 'soft' | 'certification' = 'technical') => {
-    if (!userId) return;
+    if (!userDbId) {
+      toast({
+        title: "Error",
+        description: "User not found. Please try logging in again.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const { data, error } = await supabase
         .from('user_skills')
         .insert({
-          user_id: userId,
+          user_id: userDbId,
           name: skillName,
           category,
           verified: false
@@ -129,14 +171,14 @@ export const useSkillsManagement = (userId?: string) => {
   };
 
   const removeSkill = async (skillId: string) => {
-    if (!userId) return;
+    if (!userDbId) return;
 
     try {
       const { error } = await supabase
         .from('user_skills')
         .delete()
         .eq('id', skillId)
-        .eq('user_id', userId);
+        .eq('user_id', userDbId);
 
       if (error) throw error;
 
@@ -156,13 +198,20 @@ export const useSkillsManagement = (userId?: string) => {
   };
 
   const addQualification = async (qualification: Omit<Qualification, 'id' | 'verified'>) => {
-    if (!userId) return;
+    if (!userDbId) {
+      toast({
+        title: "Error",
+        description: "User not found. Please try logging in again.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const { data, error } = await supabase
         .from('user_qualifications')
         .insert({
-          user_id: userId,
+          user_id: userDbId,
           title: qualification.title,
           institution: qualification.institution,
           date_obtained: qualification.dateObtained,
@@ -198,14 +247,14 @@ export const useSkillsManagement = (userId?: string) => {
   };
 
   const removeQualification = async (qualificationId: string) => {
-    if (!userId) return;
+    if (!userDbId) return;
 
     try {
       const { error } = await supabase
         .from('user_qualifications')
         .delete()
         .eq('id', qualificationId)
-        .eq('user_id', userId);
+        .eq('user_id', userDbId);
 
       if (error) throw error;
 
@@ -225,11 +274,11 @@ export const useSkillsManagement = (userId?: string) => {
   };
 
   useEffect(() => {
-    if (userId) {
+    if (userDbId) {
       loadSkills();
       loadQualifications();
     }
-  }, [userId]);
+  }, [userDbId]);
 
   return {
     skills,
