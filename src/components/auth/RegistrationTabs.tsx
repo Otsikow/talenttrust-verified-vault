@@ -3,6 +3,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Briefcase, GraduationCap } from "lucide-react";
 import { RegistrationForm } from "./RegistrationForm";
+import { RoleSpecificFields } from "./RoleSpecificFields";
 
 interface RegistrationTabsProps {
   activeTab: string;
@@ -42,13 +43,20 @@ export const RegistrationTabs: React.FC<RegistrationTabsProps> = ({
         </TabsTrigger>
       </TabsList>
 
-      <RegistrationForm
-        activeTab={activeTab}
-        formData={formData}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        isLoading={isLoading}
-      />
+      <div className="mt-6">
+        <RegistrationForm
+          formData={formData}
+          isLoading={isLoading}
+          onInputChange={handleInputChange}
+          onSubmit={handleSubmit}
+        />
+        
+        <RoleSpecificFields
+          activeTab={activeTab}
+          formData={formData}
+          handleInputChange={handleInputChange}
+        />
+      </div>
     </Tabs>
   );
 };
