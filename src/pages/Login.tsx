@@ -80,7 +80,15 @@ const Login = () => {
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
-        // Navigation will be handled by the useEffect hook
+        
+        // Redirect based on admin status
+        if (result.isAdmin) {
+          console.log('Admin user detected, redirecting to admin dashboard');
+          navigate("/admin");
+        } else {
+          console.log('Regular user, redirecting to seeker dashboard');
+          navigate("/dashboard/seeker");
+        }
       }
     } catch (err) {
       console.error('Login error:', err);

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,7 @@ interface AuthContextType {
   user: User | null;
   userProfile: any | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<{ user: User | null; error: string | null }>;
+  login: (email: string, password: string) => Promise<{ user: User | null; error: string | null; isAdmin?: boolean }>;
   register: (email: string, password: string, fullName: string, userType: string) => Promise<{ user: User | null; error: string | null }>;
   logout: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -38,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const result = await authService.login({ email, password });
       if (result.user && !result.error) {
-        console.log('Login successful, user:', result.user.id);
+        console.log('Login successful, user:', result.user.id, 'isAdmin:', result.isAdmin);
       }
       return result;
     } catch (error: any) {

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 
@@ -24,14 +23,47 @@ class AuthService {
 
       if (error) {
         console.error('Login error:', error);
-        return { user: null, error: error.message };
+        return { user: null, error: error.message, isAdmin: false };
       }
 
-      console.log('Login successful:', data.user?.id);
-      return { user: data.user, error: null };
+      // Check if user is admin
+      const isAdmin = await this.checkAdminStatus(data.user?.id);
+
+      console.log('Login successful:', data.user?.id, 'isAdmin:', isAdmin);
+      return { user: data.user, error: null, isAdmin };
     } catch (error: any) {
       console.error('Login error:', error);
-      return { user: null, error: 'An unexpected error occurred during login.' };
+      return { user: null, error: 'An unexpected error occurred during login.', isAdmin: false };
+    }
+  }
+
+  async checkAdminStatus(userId?: string) {
+    if (!userId) return false;
+
+    try {
+      // Get user from users table
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_id', userId)
+        .single();
+
+      if (userError || !userData) {
+        return false;
+      }
+
+      // Check if user has admin role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userData.id)
+        .eq('role', 'admin')
+        .single();
+
+      return !roleError && !!roleData;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
     }
   }
 
