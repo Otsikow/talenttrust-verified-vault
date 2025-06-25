@@ -65,7 +65,7 @@ export const useUnifiedDashboardData = () => {
       verifiedDocuments: stats.verifiedDocuments,
       verificationScore: stats.verificationScore,
       // Keep other stats from profile as fallback
-      applicationssent: 12, // This could come from a separate API
+      applicationsent: 12, // Fixed property name (single 's')
       profileViews: 48 // This could come from a separate API
     },
     isRefreshing,
