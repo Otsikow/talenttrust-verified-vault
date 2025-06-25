@@ -1,22 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { getUserDbId } from '@/utils/userUtils';
+import { SkillsService, Skill } from '@/services/skillsService';
+import { QualificationsService, Qualification } from '@/services/qualificationsService';
 
-export interface Skill {
-  id: string;
-  name: string;
-  verified: boolean;
-  category: 'technical' | 'soft' | 'certification';
-}
-
-export interface Qualification {
-  id: string;
-  title: string;
-  institution: string;
-  verified: boolean;
-  dateObtained?: string;
-}
+export { Skill, Qualification };
 
 export const useSkillsManagement = (userId?: string) => {
   const { toast } = useToast();
@@ -25,34 +14,11 @@ export const useSkillsManagement = (userId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userDbId, setUserDbId] = useState<string | null>(null);
 
-  // Get the user's database ID from the users table
-  const getUserDbId = async () => {
-    if (!userId) return null;
-    
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user database ID:', error);
-        return null;
-      }
-
-      return data?.id || null;
-    } catch (error) {
-      console.error('Error in getUserDbId:', error);
-      return null;
-    }
-  };
-
   // Initialize user database ID
   useEffect(() => {
     const initializeUserDbId = async () => {
       if (userId) {
-        const dbId = await getUserDbId();
+        const dbId = await getUserDbId(userId);
         setUserDbId(dbId);
       }
     };
@@ -64,20 +30,7 @@ export const useSkillsManagement = (userId?: string) => {
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('user_skills')
-        .select('*')
-        .eq('user_id', userDbId);
-
-      if (error) throw error;
-      
-      const skillsData = (data || []).map((item) => ({
-        id: item.id,
-        name: item.name,
-        verified: item.verified || false,
-        category: item.category as 'technical' | 'soft' | 'certification'
-      }));
-      
+      const skillsData = await SkillsService.loadSkills(userDbId);
       setSkills(skillsData);
     } catch (error) {
       console.error('Error loading skills:', error);
@@ -96,21 +49,7 @@ export const useSkillsManagement = (userId?: string) => {
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('user_qualifications')
-        .select('*')
-        .eq('user_id', userDbId);
-
-      if (error) throw error;
-      
-      const qualificationsData = (data || []).map((item) => ({
-        id: item.id,
-        title: item.title,
-        institution: item.institution,
-        verified: item.verified || false,
-        dateObtained: item.date_obtained
-      }));
-      
+      const qualificationsData = await QualificationsService.loadQualifications(userDbId);
       setQualifications(qualificationsData);
     } catch (error) {
       console.error('Error loading qualifications:', error);
@@ -135,26 +74,7 @@ export const useSkillsManagement = (userId?: string) => {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('user_skills')
-        .insert({
-          user_id: userDbId,
-          name: skillName,
-          category,
-          verified: false
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const newSkill: Skill = {
-        id: data.id,
-        name: data.name,
-        verified: data.verified || false,
-        category: data.category as 'technical' | 'soft' | 'certification'
-      };
-
+      const newSkill = await SkillsService.addSkill(userDbId, skillName, category);
       setSkills(prev => [...prev, newSkill]);
       toast({
         title: "Success",
@@ -174,14 +94,7 @@ export const useSkillsManagement = (userId?: string) => {
     if (!userDbId) return;
 
     try {
-      const { error } = await supabase
-        .from('user_skills')
-        .delete()
-        .eq('id', skillId)
-        .eq('user_id', userDbId);
-
-      if (error) throw error;
-
+      await SkillsService.removeSkill(userDbId, skillId);
       setSkills(prev => prev.filter(skill => skill.id !== skillId));
       toast({
         title: "Success",
@@ -208,30 +121,8 @@ export const useSkillsManagement = (userId?: string) => {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('user_qualifications')
-        .insert({
-          user_id: userDbId,
-          title: qualification.title,
-          institution: qualification.institution,
-          date_obtained: qualification.dateObtained,
-          verified: false
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const newQualification: Qualification = {
-        id: data.id,
-        title: data.title,
-        institution: data.institution,
-        verified: data.verified || false,
-        dateObtained: data.date_obtained
-      };
-
+      const newQualification = await QualificationsService.addQualification(userDbId, qualification);
       setQualifications(prev => [...prev, newQualification]);
-      
       toast({
         title: "Success",
         description: "Qualification added successfully",
@@ -250,14 +141,7 @@ export const useSkillsManagement = (userId?: string) => {
     if (!userDbId) return;
 
     try {
-      const { error } = await supabase
-        .from('user_qualifications')
-        .delete()
-        .eq('id', qualificationId)
-        .eq('user_id', userDbId);
-
-      if (error) throw error;
-
+      await QualificationsService.removeQualification(userDbId, qualificationId);
       setQualifications(prev => prev.filter(qual => qual.id !== qualificationId));
       toast({
         title: "Success",
