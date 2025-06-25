@@ -17,7 +17,7 @@ import { LoadingScreen } from "@/components/auth/LoadingScreen";
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, user, loading, checkAdminStatus } = useAuth();
+  const { login, user, loading } = useAuth();
   
   const [formData, setFormData] = useState({
     email: "",
@@ -36,28 +36,55 @@ const Login = () => {
     console.log('Login component - loading:', loading, 'user:', user?.id || 'no user');
   }, [loading, user]);
 
-  // Handle user login redirect
+  // Handle user login redirect with proper admin check
   useEffect(() => {
     const handleUserRedirect = async () => {
       if (user && !loading) {
         console.log('User logged in, checking admin status...');
         
-        // Check admin status after login
-        const isAdmin = await checkAdminStatus();
-        console.log('Admin status check result:', isAdmin);
-        
-        if (isAdmin) {
-          console.log('Redirecting to admin dashboard');
-          navigate("/admin");
-        } else {
-          console.log('Redirecting to seeker dashboard');
+        try {
+          // Get user from users table
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('id')
+            .eq('auth_id', user.id)
+            .single();
+
+          if (userError || !userData) {
+            console.log('User not found in users table:', userError);
+            navigate("/dashboard/seeker");
+            return;
+          }
+
+          console.log('Found user in users table:', userData.id);
+
+          // Check if user has admin role
+          const { data: roleData, error: roleError } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', userData.id)
+            .eq('role', 'admin')
+            .single();
+
+          const isAdmin = !roleError && !!roleData;
+          console.log('Admin role check result:', isAdmin, roleError);
+          
+          if (isAdmin) {
+            console.log('Admin user detected, redirecting to admin dashboard');
+            navigate("/admin");
+          } else {
+            console.log('Regular user, redirecting to seeker dashboard');
+            navigate("/dashboard/seeker");
+          }
+        } catch (error) {
+          console.error('Error during admin check:', error);
           navigate("/dashboard/seeker");
         }
       }
     };
 
     handleUserRedirect();
-  }, [user, loading, navigate, checkAdminStatus]);
+  }, [user, loading, navigate]);
 
   // Show loading screen only during initial auth check
   if (loading) {
