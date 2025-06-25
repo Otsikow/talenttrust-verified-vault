@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 export interface UserActivity {
   id: string;
   action: string;
-  details: string;
+  details: string | null;
   created_at: string;
   activity_type: string;
 }

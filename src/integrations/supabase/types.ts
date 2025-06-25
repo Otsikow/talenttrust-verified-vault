@@ -334,6 +334,41 @@ export type Database = {
           },
         ]
       }
+      user_activities: {
+        Row: {
+          action: string
+          activity_type: string
+          created_at: string
+          details: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          activity_type?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          activity_type?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_qualifications: {
         Row: {
           created_at: string
