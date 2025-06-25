@@ -42,6 +42,7 @@ export const useProfileData = () => {
       } else if (profile) {
         console.log('Profile fetched successfully:', profile);
         loadProfileData(profile);
+        setProfileError(null);
       }
     } catch (error) {
       console.error('Unexpected error fetching profile:', error);
@@ -59,11 +60,17 @@ export const useProfileData = () => {
   const handleSave = async () => {
     setIsLoading(true);
     const success = await saveProfile(async () => {
+      // Force refresh both auth profile and local profile data
       await Promise.all([
         refreshProfile(),
         fetchProfileDirectly()
       ]);
       setIsEditing(false);
+      
+      // Add a small delay to ensure data is fully refreshed
+      setTimeout(() => {
+        fetchProfileDirectly();
+      }, 500);
     });
     setIsLoading(false);
   };
@@ -116,6 +123,14 @@ export const useProfileData = () => {
       navigate("/login", { replace: true });
     }
   }, [user, userProfile, authLoading, navigate]);
+
+  // Add effect to refresh profile data when component mounts or user changes
+  useEffect(() => {
+    if (user && !authLoading && !isLoading) {
+      console.log('Refreshing profile data for mounted component');
+      fetchProfileDirectly();
+    }
+  }, [user?.id]); // Only depend on user ID to avoid infinite loops
 
   return {
     user,

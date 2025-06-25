@@ -122,7 +122,12 @@ export const useProfileManagement = (user: any) => {
           title: "Success",
           description: "Profile updated successfully",
         });
-        onSuccess?.();
+        
+        // Call onSuccess callback which should refresh the data
+        if (onSuccess) {
+          await onSuccess();
+        }
+        
         return true;
       }
     } catch (error) {

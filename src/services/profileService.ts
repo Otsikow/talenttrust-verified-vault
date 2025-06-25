@@ -21,47 +21,30 @@ class ProfileService {
       const updateData = {
         full_name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
         email: data.email || '',
-        phone: data.phone || '',
-        location: data.location || '',
-        job_title: data.jobTitle || '',
-        company: data.company || '',
-        bio: data.bio || '',
+        phone: data.phone || null, // Use null instead of empty string for optional fields
+        location: data.location || null,
+        job_title: data.jobTitle || null,
+        company: data.company || null,
+        bio: data.bio || null,
         updated_at: new Date().toISOString()
       };
 
       console.log('Prepared update data:', updateData);
 
-      // Get the most recent profile for this user first
-      const { data: existingProfiles, error: fetchError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_id', userId)
-        .order('updated_at', { ascending: false })
-        .limit(1);
-
-      if (fetchError) {
-        console.error('Error fetching existing profile:', fetchError);
-        return { error: fetchError.message };
-      }
-
-      if (!existingProfiles || existingProfiles.length === 0) {
-        console.error('No profile found for user:', userId);
-        return { error: 'No profile found for user' };
-      }
-
-      // Update the most recent profile using its ID
-      const profileId = existingProfiles[0].id;
-      const { error } = await supabase
+      // Update the user profile directly using auth_id
+      const { data: updatedProfile, error } = await supabase
         .from('users')
         .update(updateData)
-        .eq('id', profileId);
+        .eq('auth_id', userId)
+        .select()
+        .single();
 
       if (error) {
         console.error('Profile update error:', error);
         return { error: error.message };
       }
 
-      console.log('Profile updated successfully');
+      console.log('Profile updated successfully:', updatedProfile);
       return {};
     } catch (error: any) {
       console.error('Profile update error:', error);
@@ -111,50 +94,49 @@ class ProfileService {
       console.log('Fetching profile for user:', userId);
       
       // Get the most recent profile for this user
-      const { data: profiles, error } = await supabase
+      const { data: profile, error } = await supabase
         .from('users')
         .select('*')
         .eq('auth_id', userId)
-        .order('updated_at', { ascending: false })
-        .limit(1);
+        .single();
 
       if (error) {
-        console.error('Profile fetch error:', error);
-        return { error: error.message };
-      }
+        // If no profile exists, create one
+        if (error.code === 'PGRST116') {
+          console.log('No profile found, creating default profile');
+          
+          // Get user data from auth to populate email
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          const { data: newProfile, error: createError } = await supabase
+            .from('users')
+            .insert({
+              auth_id: userId,
+              email: user?.email || '',
+              full_name: user?.user_metadata?.full_name || '',
+              phone: null,
+              location: null,
+              job_title: null,
+              company: null,
+              bio: null,
+              user_type: 'job_seeker'
+            })
+            .select()
+            .single();
 
-      if (!profiles || profiles.length === 0) {
-        console.log('No profile found, creating default profile');
-        
-        // Get user data from auth to populate email
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        const { data: newProfile, error: createError } = await supabase
-          .from('users')
-          .insert({
-            auth_id: userId,
-            email: user?.email || '',
-            full_name: user?.user_metadata?.full_name || '',
-            phone: '',
-            location: '',
-            job_title: '',
-            company: '',
-            bio: '',
-            user_type: 'job_seeker'
-          })
-          .select()
-          .single();
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            return { error: createError.message };
+          }
 
-        if (createError) {
-          console.error('Error creating profile:', createError);
-          return { error: createError.message };
+          console.log('Profile created successfully:', newProfile);
+          return { profile: newProfile };
+        } else {
+          console.error('Profile fetch error:', error);
+          return { error: error.message };
         }
-
-        console.log('Profile created successfully:', newProfile);
-        return { profile: newProfile };
       }
 
-      const profile = profiles[0];
       console.log('Profile fetched successfully:', profile);
       return { profile };
     } catch (error: any) {
