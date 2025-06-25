@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +15,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  checkAdminStatus: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +25,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userProfile, setUserProfile] = useState<any | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const navigate = useNavigate();
+
+  const checkAdminStatus = async (): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      console.log('Checking admin status for user:', user.id);
+      const isAdmin = await authService.checkAdminStatus(user.id);
+      console.log('Admin status result:', isAdmin);
+      return isAdmin;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+  };
 
   const refreshProfile = async () => {
     if (user) {
@@ -87,7 +103,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       register,
       logout,
       signOut,
-      refreshProfile
+      refreshProfile,
+      checkAdminStatus
     }}>
       {children}
     </AuthContext.Provider>

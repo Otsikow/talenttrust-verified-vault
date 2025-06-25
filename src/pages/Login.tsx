@@ -17,7 +17,7 @@ import { LoadingScreen } from "@/components/auth/LoadingScreen";
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, user, loading } = useAuth();
+  const { login, user, loading, checkAdminStatus } = useAuth();
   
   const [formData, setFormData] = useState({
     email: "",
@@ -36,13 +36,28 @@ const Login = () => {
     console.log('Login component - loading:', loading, 'user:', user?.id || 'no user');
   }, [loading, user]);
 
-  // Redirect if already logged in
+  // Handle user login redirect
   useEffect(() => {
-    if (user && !loading) {
-      console.log('User logged in, redirecting to dashboard');
-      navigate("/dashboard/seeker");
-    }
-  }, [user, loading, navigate]);
+    const handleUserRedirect = async () => {
+      if (user && !loading) {
+        console.log('User logged in, checking admin status...');
+        
+        // Check admin status after login
+        const isAdmin = await checkAdminStatus();
+        console.log('Admin status check result:', isAdmin);
+        
+        if (isAdmin) {
+          console.log('Redirecting to admin dashboard');
+          navigate("/admin");
+        } else {
+          console.log('Redirecting to seeker dashboard');
+          navigate("/dashboard/seeker");
+        }
+      }
+    };
+
+    handleUserRedirect();
+  }, [user, loading, navigate, checkAdminStatus]);
 
   // Show loading screen only during initial auth check
   if (loading) {
@@ -81,14 +96,7 @@ const Login = () => {
           description: "You have successfully logged in.",
         });
         
-        // Redirect based on admin status
-        if (result.isAdmin) {
-          console.log('Admin user detected, redirecting to admin dashboard');
-          navigate("/admin");
-        } else {
-          console.log('Regular user, redirecting to seeker dashboard');
-          navigate("/dashboard/seeker");
-        }
+        // The useEffect above will handle the redirect based on admin status
       }
     } catch (err) {
       console.error('Login error:', err);
