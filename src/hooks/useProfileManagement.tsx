@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { profileService, UpdateProfileData } from '@/services/profileService';
+import { activityService } from '@/services/activityService';
 
 interface ProfileData {
   firstName: string;
@@ -118,6 +119,10 @@ export const useProfileManagement = (user: any) => {
         return false;
       } else {
         console.log('Profile saved successfully');
+        
+        // Log the profile update activity
+        await activityService.logProfileUpdate(user.id, 'Personal information updated');
+        
         toast({
           title: "Success",
           description: "Profile updated successfully",
