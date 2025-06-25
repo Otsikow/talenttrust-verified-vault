@@ -30,17 +30,17 @@ export const useSkillsManagement = (userId?: string) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('user_skills' as any)
+        .from('user_skills')
         .select('*')
         .eq('user_id', userId);
 
       if (error) throw error;
       
-      const skillsData = (data || []).map((item: any) => ({
+      const skillsData = (data || []).map((item) => ({
         id: item.id,
         name: item.name,
         verified: item.verified || false,
-        category: item.category
+        category: item.category as 'technical' | 'soft' | 'certification'
       }));
       
       setSkills(skillsData);
@@ -62,13 +62,13 @@ export const useSkillsManagement = (userId?: string) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('user_qualifications' as any)
+        .from('user_qualifications')
         .select('*')
         .eq('user_id', userId);
 
       if (error) throw error;
       
-      const qualificationsData = (data || []).map((item: any) => ({
+      const qualificationsData = (data || []).map((item) => ({
         id: item.id,
         title: item.title,
         institution: item.institution,
@@ -94,7 +94,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { data, error } = await supabase
-        .from('user_skills' as any)
+        .from('user_skills')
         .insert({
           user_id: userId,
           name: skillName,
@@ -110,7 +110,7 @@ export const useSkillsManagement = (userId?: string) => {
         id: data.id,
         name: data.name,
         verified: data.verified || false,
-        category: data.category
+        category: data.category as 'technical' | 'soft' | 'certification'
       };
 
       setSkills(prev => [...prev, newSkill]);
@@ -133,7 +133,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { error } = await supabase
-        .from('user_skills' as any)
+        .from('user_skills')
         .delete()
         .eq('id', skillId)
         .eq('user_id', userId);
@@ -160,7 +160,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { data, error } = await supabase
-        .from('user_qualifications' as any)
+        .from('user_qualifications')
         .insert({
           user_id: userId,
           title: qualification.title,
@@ -202,7 +202,7 @@ export const useSkillsManagement = (userId?: string) => {
 
     try {
       const { error } = await supabase
-        .from('user_qualifications' as any)
+        .from('user_qualifications')
         .delete()
         .eq('id', qualificationId)
         .eq('user_id', userId);
