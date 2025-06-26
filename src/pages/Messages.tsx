@@ -1,11 +1,11 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Shield } from "lucide-react";
+import { Bell, User, Home, Briefcase, Lock, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import ConversationList from "@/components/messages/ConversationList";
 import MessageView from "@/components/messages/MessageView";
+import MobileNavigation from "@/components/navigation/MobileNavigation";
 
 const Messages = () => {
   const navigate = useNavigate();
@@ -13,6 +13,37 @@ const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  const navigationItems = [
+    {
+      id: 'dashboard',
+      icon: Home,
+      label: 'Dashboard',
+      path: '/dashboard/seeker',
+      isActive: false
+    },
+    {
+      id: 'jobs',
+      icon: Briefcase,
+      label: 'Find Jobs',
+      path: '/jobs',
+      isActive: false
+    },
+    {
+      id: 'vault',
+      icon: Lock,
+      label: 'My Vault',
+      path: '/vault',
+      isActive: false
+    },
+    {
+      id: 'messages',
+      icon: MessageSquare,
+      label: 'Messages',
+      path: '/messages',
+      isActive: true
+    }
+  ];
 
   // Mock conversation data with additional state
   const [conversations, setConversations] = useState([
@@ -174,29 +205,49 @@ const Messages = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
-              <span className="text-xl font-bold text-gray-900">TrustTalent</span>
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4 sm:space-x-6 min-w-0 flex-1">
+              <div className="flex items-center space-x-2">
+                <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
+                <span className="text-lg sm:text-xl font-bold text-gray-900">TrustTalent</span>
+              </div>
+              <nav className="hidden md:flex space-x-1">
+                {navigationItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Button
+                      key={item.id}
+                      variant="ghost"
+                      onClick={() => navigate(item.path)}
+                      className={`flex flex-col items-center px-3 py-2 text-xs font-medium rounded-lg transition-colors relative ${
+                        item.isActive
+                          ? 'text-[#183B6B] bg-blue-50'
+                          : 'text-gray-600 hover:text-[#183B6B] hover:bg-gray-50'
+                      }`}
+                    >
+                      <IconComponent className="h-4 w-4 mb-1" />
+                      <span className="text-xs">{item.label}</span>
+                      {item.isActive && (
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-0.5 bg-[#E2B319] rounded-t-full" />
+                      )}
+                    </Button>
+                  );
+                })}
+              </nav>
             </div>
-            <nav className="hidden md:flex space-x-6">
-              <Button variant="ghost" onClick={() => navigate("/dashboard/seeker")}>Dashboard</Button>
-              <Button variant="ghost" onClick={() => navigate("/jobs")}>Find Jobs</Button>
-              <Button variant="ghost" onClick={() => navigate("/vault")}>My Vault</Button>
-              <Button variant="ghost" className="font-medium">Messages</Button>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
-              <span className="sr-only">Notifications</span>
-              🔔
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
-              <span className="sr-only">Profile</span>
-              👤
-            </Button>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <MobileNavigation />
+              <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")} className="hidden sm:flex">
+                <span className="sr-only">Notifications</span>
+                <Bell className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="hidden sm:flex">
+                <span className="sr-only">Profile</span>
+                <User className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
