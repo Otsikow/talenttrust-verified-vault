@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 import { useEffect, useState } from "react";
 import MobileNavigation from "@/components/navigation/MobileNavigation";
+import HomeFooter from "@/components/home/HomeFooter";
 
 const SeekerDashboard = () => {
   const navigate = useNavigate();
@@ -329,6 +330,8 @@ const SeekerDashboard = () => {
           </CardContent>
         </Card>
       </div>
+      
+      <HomeFooter />
     </div>;
 };
 export default SeekerDashboard;

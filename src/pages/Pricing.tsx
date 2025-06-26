@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { pricingService, PricingPlan, UserSubscription } from "@/services/pricin
 import PricingCard from "@/components/pricing/PricingCard";
 import { Bell, User, Home, Briefcase, Lock, MessageSquare, DollarSign } from "lucide-react";
 import MobileNavigation from "@/components/navigation/MobileNavigation";
+import HomeFooter from "@/components/home/HomeFooter";
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -225,6 +225,8 @@ const Pricing = () => {
           </div>
         </div>
       </div>
+      
+      <HomeFooter />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import ProfileNavigation from "./ProfileNavigation";
 import ProfileHeader from "./ProfileHeader";
 import ProfileTabs from "./ProfileTabs";
 import { useProfileData } from "@/hooks/useProfileData";
+import HomeFooter from "@/components/home/HomeFooter";
 
 const ProfileLayout = () => {
   const {
@@ -82,6 +83,8 @@ const ProfileLayout = () => {
           onProfileDataChange={setProfileData}
         />
       </div>
+      
+      <HomeFooter />
     </div>
   );
 };
