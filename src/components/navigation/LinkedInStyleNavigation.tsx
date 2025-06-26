@@ -87,7 +87,7 @@ const LinkedInStyleNavigation = () => {
               alt="TrustTalent Logo" 
               className="h-8 w-8" 
             />
-            <span className="text-xl font-bold text-blue-600 hidden sm:inline">
+            <span className="text-xl font-bold text-[#183B6B] hidden sm:inline">
               TrustTalent
             </span>
           </div>
@@ -102,15 +102,15 @@ const LinkedInStyleNavigation = () => {
                   onClick={() => handleNavigation(item.path)}
                   className={`flex flex-col items-center px-3 py-2 text-xs font-medium rounded-lg transition-colors relative ${
                     item.isActive
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'text-[#183B6B] bg-blue-50'
+                      : 'text-gray-600 hover:text-[#183B6B] hover:bg-gray-50'
                   }`}
                 >
                   <div className="relative">
                     <IconComponent className="h-5 w-5 mb-1" />
                     {item.badge && item.badge > 0 && (
                       <Badge 
-                        className="absolute -top-2 -right-2 h-4 w-4 p-0 text-xs bg-red-500 text-white flex items-center justify-center"
+                        className="absolute -top-2 -right-2 h-4 w-4 p-0 text-xs bg-[#E2B319] text-white flex items-center justify-center border-none"
                       >
                         {item.badge > 9 ? '9+' : item.badge}
                       </Badge>
@@ -118,7 +118,7 @@ const LinkedInStyleNavigation = () => {
                   </div>
                   <span className="hidden sm:inline">{item.label}</span>
                   {item.isActive && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-0.5 bg-blue-600 rounded-t-full" />
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-0.5 bg-[#E2B319] rounded-t-full" />
                   )}
                 </button>
               );
@@ -129,14 +129,14 @@ const LinkedInStyleNavigation = () => {
               onClick={() => handleNavigation('/profile')}
               className={`flex flex-col items-center px-3 py-2 text-xs font-medium rounded-lg transition-colors relative ${
                 location.pathname === '/profile'
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'text-[#183B6B] bg-blue-50'
+                  : 'text-gray-600 hover:text-[#183B6B] hover:bg-gray-50'
               }`}
             >
               <div className="flex items-center space-x-1">
                 <Avatar className="h-5 w-5">
                   <AvatarImage src={avatarUrl} />
-                  <AvatarFallback className="text-xs">
+                  <AvatarFallback className="text-xs bg-[#183B6B] text-white">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
@@ -144,7 +144,7 @@ const LinkedInStyleNavigation = () => {
               </div>
               <span className="hidden sm:inline">Me</span>
               {location.pathname === '/profile' && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-0.5 bg-blue-600 rounded-t-full" />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-0.5 bg-[#E2B319] rounded-t-full" />
               )}
             </button>
           </div>

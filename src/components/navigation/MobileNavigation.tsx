@@ -43,32 +43,32 @@ const MobileNavigation = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="sm" className="md:hidden">
-          <Menu className="h-5 w-5" />
+          <Menu className="h-5 w-5 text-[#183B6B]" />
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-80">
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b">
+          <div className="flex items-center justify-between pb-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
               <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
-              <span className="text-lg font-bold">TrustTalent</span>
+              <span className="text-lg font-bold text-[#183B6B]">TrustTalent</span>
             </div>
             <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 text-gray-600" />
             </Button>
           </div>
 
           {/* User Profile */}
-          <div className="py-4 border-b">
+          <div className="py-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10">
                 <AvatarImage src={avatarUrl} />
-                <AvatarFallback>{getInitials()}</AvatarFallback>
+                <AvatarFallback className="bg-[#183B6B] text-white">{getInitials()}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <p className="font-medium text-sm">
+                <p className="font-medium text-sm text-[#183B6B]">
                   {userProfile?.full_name || user?.email?.split('@')[0] || 'User'}
                 </p>
                 <p className="text-xs text-gray-500">{user?.email}</p>
@@ -83,15 +83,20 @@ const MobileNavigation = () => {
                 <Button
                   key={item.path}
                   variant="ghost"
-                  className="w-full justify-start text-left"
+                  className="w-full justify-start text-left hover:bg-blue-50 hover:text-[#183B6B] transition-colors"
                   onClick={() => handleNavigation(item.path)}
                 >
-                  <item.icon className="h-4 w-4 mr-3" />
-                  {item.label}
+                  <item.icon className="h-4 w-4 mr-3 text-[#183B6B]" />
+                  <span className="text-gray-700">{item.label}</span>
                 </Button>
               ))}
             </div>
           </nav>
+
+          {/* Footer accent */}
+          <div className="border-t border-gray-200 pt-4">
+            <div className="h-1 w-full bg-gradient-to-r from-[#183B6B] to-[#E2B319] rounded-full"></div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
