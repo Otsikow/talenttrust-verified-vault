@@ -2,11 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FileText, Shield, Briefcase, MessageSquare, Star, TrendingUp, Bell, User, RefreshCw } from "lucide-react";
+import { FileText, Shield, Briefcase, MessageSquare, Star, TrendingUp, Bell, User, RefreshCw, Home, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 import { useEffect, useState } from "react";
 import MobileNavigation from "@/components/navigation/MobileNavigation";
+
 const SeekerDashboard = () => {
   const navigate = useNavigate();
   const {
@@ -59,6 +60,38 @@ const SeekerDashboard = () => {
         <div className="text-lg">Loading...</div>
       </div>;
   }
+
+  const navigationItems = [
+    {
+      id: 'dashboard',
+      icon: Home,
+      label: 'Dashboard',
+      path: '/dashboard/seeker',
+      isActive: true
+    },
+    {
+      id: 'jobs',
+      icon: Briefcase,
+      label: 'Find Jobs',
+      path: '/jobs',
+      isActive: false
+    },
+    {
+      id: 'vault',
+      icon: Lock,
+      label: 'My Vault',
+      path: '/vault',
+      isActive: false
+    },
+    {
+      id: 'messages',
+      icon: MessageSquare,
+      label: 'Messages',
+      path: '/messages',
+      isActive: false
+    }
+  ];
+
   const dashboardStats = [{
     label: "Documents Uploaded",
     value: stats.totalDocuments,
@@ -128,11 +161,28 @@ const SeekerDashboard = () => {
                 <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
                 <span className="text-lg font-bold text-gray-900 sm:text-3xl">TrustTalent</span>
               </div>
-              <nav className="hidden md:flex space-x-6">
-                <Button variant="ghost" className="font-medium text-sm">Dashboard</Button>
-                <Button variant="ghost" onClick={() => navigate("/jobs")} className="text-sm">Find Jobs</Button>
-                <Button variant="ghost" onClick={() => navigate("/vault")} className="text-sm">My Vault</Button>
-                <Button variant="ghost" onClick={() => navigate("/messages")} className="text-sm">Messages</Button>
+              <nav className="hidden md:flex space-x-1">
+                {navigationItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Button
+                      key={item.id}
+                      variant="ghost"
+                      onClick={() => navigate(item.path)}
+                      className={`flex flex-col items-center px-3 py-2 text-xs font-medium rounded-lg transition-colors relative ${
+                        item.isActive
+                          ? 'text-[#183B6B] bg-blue-50'
+                          : 'text-gray-600 hover:text-[#183B6B] hover:bg-gray-50'
+                      }`}
+                    >
+                      <IconComponent className="h-4 w-4 mb-1" />
+                      <span className="text-xs">{item.label}</span>
+                      {item.isActive && (
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-0.5 bg-[#E2B319] rounded-t-full" />
+                      )}
+                    </Button>
+                  );
+                })}
               </nav>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
