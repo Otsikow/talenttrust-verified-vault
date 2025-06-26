@@ -1,19 +1,9 @@
 
-import { useState, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Shield, 
-  Edit, 
-  Save,
-  Mail,
-  MapPin,
-  Calendar,
-  Camera
-} from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Edit, Camera, Save, X } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ProfileData {
   firstName: string;
@@ -36,170 +26,128 @@ interface ProfileHeaderProps {
   onEditToggle: () => void;
   onSave: () => void;
   avatarUrl?: string;
-  onAvatarChange?: (file: File) => void;
+  onAvatarChange: (file: File) => void;
 }
 
 const ProfileHeader = ({ 
   profileData, 
   isEditing, 
   onEditToggle, 
-  onSave, 
+  onSave,
   avatarUrl,
-  onAvatarChange 
+  onAvatarChange
 }: ProfileHeaderProps) => {
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
-  const handleSave = () => {
-    onSave();
+  const getInitials = () => {
+    const firstInitial = profileData.firstName?.charAt(0) || '';
+    const lastInitial = profileData.lastName?.charAt(0) || '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
   };
 
-  const handleAvatarClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "Invalid File Type",
-          description: "Please select an image file",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File Too Large",
-          description: "Please select an image smaller than 5MB",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      setIsUploading(true);
-      try {
-        if (onAvatarChange) {
-          await onAvatarChange(file);
-        }
-      } catch (error) {
-        console.error('Avatar upload error:', error);
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload avatar. Please try again.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsUploading(false);
-      }
+      onAvatarChange(file);
     }
-  };
-
-  // Generate initials from first and last name, or use first two letters of email if no name
-  const getInitials = () => {
-    if (profileData.firstName || profileData.lastName) {
-      return `${profileData.firstName?.[0] || ''}${profileData.lastName?.[0] || ''}`.toUpperCase();
-    }
-    return profileData.email?.slice(0, 2).toUpperCase() || 'U';
-  };
-
-  const getDisplayName = () => {
-    const fullName = `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim();
-    return fullName || profileData.email || 'Your Name';
   };
 
   return (
     <Card className="mb-8">
-      <CardContent className="p-8">
-        <div className="flex items-center space-x-6">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
+          {/* Edit Button - Top Right on Mobile */}
+          <div className="w-full flex justify-end sm:absolute sm:top-4 sm:right-4">
+            {isEditing ? (
+              <div className="flex space-x-2">
+                <Button size="sm" onClick={onSave} className="bg-[#183B6B] hover:bg-[#183B6B]/90">
+                  <Save className="h-4 w-4 mr-1" />
+                  Save
+                </Button>
+                <Button size="sm" variant="outline" onClick={onEditToggle}>
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel
+                </Button>
+              </div>
+            ) : (
+              <Button size="sm" variant="outline" onClick={onEditToggle}>
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            )}
+          </div>
+
+          {/* Avatar Section */}
           <div className="relative">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={avatarUrl} />
-              <AvatarFallback className="text-2xl">
+            <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-4 border-white shadow-lg">
+              <AvatarImage src={avatarUrl} alt="Profile" />
+              <AvatarFallback className="bg-[#183B6B] text-white text-lg sm:text-xl font-semibold">
                 {getInitials()}
               </AvatarFallback>
             </Avatar>
-            <Button 
-              size="sm" 
-              className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
-              onClick={handleAvatarClick}
-              disabled={isUploading}
-            >
-              <Camera className="h-4 w-4" />
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
+            {isEditing && (
+              <label className="absolute bottom-0 right-0 bg-[#183B6B] text-white p-1.5 rounded-full cursor-pointer hover:bg-[#183B6B]/90 transition-colors">
+                <Camera className="h-3 w-3" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
-          
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {getDisplayName()}
-              </h1>
-              <div className="flex space-x-2">
-                {!isEditing ? (
-                  <Button onClick={onEditToggle}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                ) : (
-                  <>
-                    <Button variant="outline" onClick={onEditToggle}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSave}>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Changes
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-            
-            <p className="text-lg text-gray-600 mb-4">
-              {profileData.jobTitle || 'Add your job title'}
-            </p>
-            
-            <div className="flex items-center space-x-6 text-gray-600 mb-4">
-              <div className="flex items-center space-x-1">
-                <Mail className="h-4 w-4" />
-                <span>{profileData.email}</span>
-              </div>
-              {profileData.location && (
-                <div className="flex items-center space-x-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{profileData.location}</span>
-                </div>
-              )}
-              {profileData.joinDate && (
-                <div className="flex items-center space-x-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>Joined {profileData.joinDate}</span>
-                </div>
-              )}
-            </div>
 
-            <div className="flex items-center space-x-4">
-              <Badge className="bg-green-100 text-green-700">
-                <Shield className="h-3 w-3 mr-1" />
-                {profileData.verificationScore}% Verified
-              </Badge>
-              <Badge variant="outline">
-                {profileData.documentsVerified}/{profileData.totalDocuments} Documents Verified
-              </Badge>
+          {/* Name and Title */}
+          <div className="space-y-2 w-full max-w-md">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">
+              {profileData.firstName} {profileData.lastName}
+            </h1>
+            <p className="text-base sm:text-lg text-gray-600 break-words">
+              {profileData.jobTitle || "Add your job title"}
+            </p>
+            <p className="text-sm text-gray-500 break-all">
+              {profileData.email}
+            </p>
+          </div>
+
+          {/* Verification Status and Documents */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 w-full justify-center">
+            <Badge 
+              variant="secondary" 
+              className="bg-green-50 text-green-700 border-green-200 px-3 py-1 text-sm font-medium"
+            >
+              ✓ {profileData.verificationScore}% Verified
+            </Badge>
+            <div className="text-sm text-gray-600 font-medium">
+              {profileData.documentsVerified}/{profileData.totalDocuments} Documents
             </div>
+          </div>
+
+          {/* Bio Section */}
+          {profileData.bio && (
+            <div className="w-full max-w-2xl">
+              <p className="text-gray-700 text-sm sm:text-base leading-relaxed break-words">
+                {profileData.bio}
+              </p>
+            </div>
+          )}
+
+          {/* Additional Info */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500 w-full justify-center items-center">
+            {profileData.location && (
+              <span className="break-words text-center">{profileData.location}</span>
+            )}
+            {profileData.company && (
+              <>
+                {profileData.location && <span className="hidden sm:inline">•</span>}
+                <span className="break-words text-center">{profileData.company}</span>
+              </>
+            )}
+            {profileData.joinDate && (
+              <>
+                {(profileData.location || profileData.company) && <span className="hidden sm:inline">•</span>}
+                <span className="text-center">Joined {profileData.joinDate}</span>
+              </>
+            )}
           </div>
         </div>
       </CardContent>
