@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FileText, Shield, Briefcase, MessageSquare, Star, TrendingUp, Bell, User, RefreshCw, Home, Lock } from "lucide-react";
+import { FileText, Shield, Briefcase, MessageSquare, Star, TrendingUp, Bell, User, RefreshCw, Home, Lock, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 import { useEffect, useState } from "react";
@@ -88,6 +88,13 @@ const SeekerDashboard = () => {
       icon: MessageSquare,
       label: 'Messages',
       path: '/messages',
+      isActive: false
+    },
+    {
+      id: 'pricing',
+      icon: DollarSign,
+      label: 'Pricing',
+      path: '/pricing',
       isActive: false
     }
   ];
