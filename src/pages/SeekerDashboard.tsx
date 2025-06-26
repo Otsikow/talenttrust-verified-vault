@@ -2,32 +2,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  FileText, 
-  Shield, 
-  Briefcase, 
-  MessageSquare, 
-  Star,
-  TrendingUp,
-  Bell,
-  User,
-  RefreshCw
-} from "lucide-react";
+import { FileText, Shield, Briefcase, MessageSquare, Star, TrendingUp, Bell, User, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 import { useEffect, useState } from "react";
 import MobileNavigation from "@/components/navigation/MobileNavigation";
-
 const SeekerDashboard = () => {
   const navigate = useNavigate();
-  const { 
-    user, 
-    userProfile, 
-    stats, 
-    isRefreshing, 
-    refreshAllData 
+  const {
+    user,
+    userProfile,
+    stats,
+    isRefreshing,
+    refreshAllData
   } = useUnifiedDashboardData();
-  
   const [displayName, setDisplayName] = useState("Your Name");
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 
@@ -37,7 +25,6 @@ const SeekerDashboard = () => {
       navigate("/login");
     }
   }, [user, navigate]);
-
   useEffect(() => {
     if (userProfile && user) {
       // Parse full name or use email
@@ -68,36 +55,70 @@ const SeekerDashboard = () => {
 
   // Show loading while checking authentication
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
         <div className="text-lg">Loading...</div>
-      </div>
-    );
+      </div>;
   }
-
-  const dashboardStats = [
-    { label: "Documents Uploaded", value: stats.totalDocuments, icon: FileText },
-    { label: "Verification Score", value: `${stats.verificationScore}%`, icon: Shield },
-    { label: "Applications Sent", value: stats.applicationsent, icon: Briefcase },
-    { label: "Profile Views", value: stats.profileViews, icon: TrendingUp },
-  ];
-
-  const recentActivity = [
-    { action: "Document verified", item: "University Degree", time: "2 hours ago", status: "success" },
-    { action: "Application sent", item: "Software Engineer at TechCorp", time: "1 day ago", status: "pending" },
-    { action: "Profile updated", item: "Work experience added", time: "2 days ago", status: "info" },
-    { action: "Document uploaded", item: "Professional Certificate", time: "3 days ago", status: "success" },
-  ];
-
-  const quickActions = [
-    { title: "Upload Document", description: "Add new credentials to your vault", icon: FileText, action: () => navigate("/vault") },
-    { title: "Find Jobs", description: "Browse and apply to new opportunities", icon: Briefcase, action: () => navigate("/jobs") },
-    { title: "Update Profile", description: "Keep your information current", icon: User, action: () => navigate("/profile") },
-    { title: "Messages", description: "Check your conversations", icon: MessageSquare, action: () => navigate("/messages") },
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+  const dashboardStats = [{
+    label: "Documents Uploaded",
+    value: stats.totalDocuments,
+    icon: FileText
+  }, {
+    label: "Verification Score",
+    value: `${stats.verificationScore}%`,
+    icon: Shield
+  }, {
+    label: "Applications Sent",
+    value: stats.applicationsent,
+    icon: Briefcase
+  }, {
+    label: "Profile Views",
+    value: stats.profileViews,
+    icon: TrendingUp
+  }];
+  const recentActivity = [{
+    action: "Document verified",
+    item: "University Degree",
+    time: "2 hours ago",
+    status: "success"
+  }, {
+    action: "Application sent",
+    item: "Software Engineer at TechCorp",
+    time: "1 day ago",
+    status: "pending"
+  }, {
+    action: "Profile updated",
+    item: "Work experience added",
+    time: "2 days ago",
+    status: "info"
+  }, {
+    action: "Document uploaded",
+    item: "Professional Certificate",
+    time: "3 days ago",
+    status: "success"
+  }];
+  const quickActions = [{
+    title: "Upload Document",
+    description: "Add new credentials to your vault",
+    icon: FileText,
+    action: () => navigate("/vault")
+  }, {
+    title: "Find Jobs",
+    description: "Browse and apply to new opportunities",
+    icon: Briefcase,
+    action: () => navigate("/jobs")
+  }, {
+    title: "Update Profile",
+    description: "Keep your information current",
+    icon: User,
+    action: () => navigate("/profile")
+  }, {
+    title: "Messages",
+    description: "Check your conversations",
+    icon: MessageSquare,
+    action: () => navigate("/messages")
+  }];
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 sm:py-4">
@@ -105,7 +126,7 @@ const SeekerDashboard = () => {
             <div className="flex items-center space-x-4 sm:space-x-6">
               <div className="flex items-center space-x-2">
                 <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
-                <span className="text-lg sm:text-xl font-bold text-gray-900">TrustTalent</span>
+                <span className="text-lg font-bold text-gray-900 sm:text-3xl">TrustTalent</span>
               </div>
               <nav className="hidden md:flex space-x-6">
                 <Button variant="ghost" className="font-medium text-sm">Dashboard</Button>
@@ -120,13 +141,7 @@ const SeekerDashboard = () => {
                 <Bell className="h-4 w-4" />
                 <span className="sr-only">Notifications</span>
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={refreshAllData}
-                disabled={isRefreshing}
-                className="hidden sm:flex"
-              >
+              <Button variant="ghost" size="sm" onClick={refreshAllData} disabled={isRefreshing} className="hidden sm:flex">
                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                 <span className="sr-only">Refresh</span>
               </Button>
@@ -154,13 +169,7 @@ const SeekerDashboard = () => {
               </h1>
               <p className="text-gray-600 text-sm sm:text-base">Here's what's happening with your job search today.</p>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={refreshAllData}
-              disabled={isRefreshing}
-              className="sm:hidden"
-            >
+            <Button variant="outline" size="sm" onClick={refreshAllData} disabled={isRefreshing} className="sm:hidden">
               <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
@@ -169,8 +178,7 @@ const SeekerDashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          {dashboardStats.map((stat, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow">
+          {dashboardStats.map((stat, index) => <Card key={index} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
@@ -180,8 +188,7 @@ const SeekerDashboard = () => {
                   <stat.icon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 flex-shrink-0 ml-2" />
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
@@ -194,8 +201,7 @@ const SeekerDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-                  {quickActions.map((action, index) => (
-                    <Card key={index} className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" onClick={action.action}>
+                  {quickActions.map((action, index) => <Card key={index} className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" onClick={action.action}>
                       <CardContent className="p-4">
                         <div className="flex items-start space-x-3">
                           <action.icon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mt-1 flex-shrink-0" />
@@ -205,8 +211,7 @@ const SeekerDashboard = () => {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
               </CardContent>
             </Card>
@@ -221,19 +226,14 @@ const SeekerDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentActivity.map((activity, index) => (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                        activity.status === 'success' ? 'bg-green-500' :
-                        activity.status === 'pending' ? 'bg-yellow-500' : 'bg-blue-500'
-                      }`} />
+                  {recentActivity.map((activity, index) => <div key={index} className="flex items-start space-x-3">
+                      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${activity.status === 'success' ? 'bg-green-500' : activity.status === 'pending' ? 'bg-yellow-500' : 'bg-blue-500'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">{activity.action}</p>
                         <p className="text-sm text-gray-600 truncate">{activity.item}</p>
                         <p className="text-xs text-gray-500">{activity.time}</p>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </CardContent>
             </Card>
@@ -253,14 +253,13 @@ const SeekerDashboard = () => {
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium">Progress</span>
               <span className="text-sm text-gray-600">
-                {stats.totalDocuments > 0 ? Math.min(75 + (stats.totalDocuments * 5), 100) : 25}%
+                {stats.totalDocuments > 0 ? Math.min(75 + stats.totalDocuments * 5, 100) : 25}%
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-              <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
-                style={{ width: `${stats.totalDocuments > 0 ? Math.min(75 + (stats.totalDocuments * 5), 100) : 25}%` }}
-              ></div>
+              <div className="bg-blue-600 h-2 rounded-full transition-all duration-500" style={{
+              width: `${stats.totalDocuments > 0 ? Math.min(75 + stats.totalDocuments * 5, 100) : 25}%`
+            }}></div>
             </div>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className="text-xs">✓ Basic Info</Badge>
@@ -273,8 +272,6 @@ const SeekerDashboard = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default SeekerDashboard;
