@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { Bell, User, Home, Briefcase, Lock, MessageSquare } from "lucide-react";
+import { Bell, User, Home, Briefcase, Lock, MessageSquare, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import MobileNavigation from "@/components/navigation/MobileNavigation";
 
@@ -34,6 +33,13 @@ const JobsHeader = () => {
       icon: MessageSquare,
       label: 'Messages',
       path: '/messages',
+      isActive: false
+    },
+    {
+      id: 'pricing',
+      icon: DollarSign,
+      label: 'Pricing',
+      path: '/pricing',
       isActive: false
     }
   ];

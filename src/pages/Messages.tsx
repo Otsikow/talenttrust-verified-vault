@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, User, Home, Briefcase, Lock, MessageSquare } from "lucide-react";
+import { Bell, User, Home, Briefcase, Lock, MessageSquare, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import ConversationList from "@/components/messages/ConversationList";
@@ -42,6 +42,13 @@ const Messages = () => {
       label: 'Messages',
       path: '/messages',
       isActive: true
+    },
+    {
+      id: 'pricing',
+      icon: DollarSign,
+      label: 'Pricing',
+      path: '/pricing',
+      isActive: false
     }
   ];
 
