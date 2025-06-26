@@ -29,7 +29,7 @@ interface ConversationListProps {
 }
 
 const ConversationList = ({
-  conversations,
+  conversations = [], // Add default empty array
   selectedConversation,
   searchTerm,
   showFavoritesOnly,
@@ -37,6 +37,19 @@ const ConversationList = ({
   onSearchChange,
   onToggleFavoritesFilter
 }: ConversationListProps) => {
+  // Early return if conversations is not an array
+  if (!Array.isArray(conversations)) {
+    console.warn("ConversationList: conversations prop is not an array:", conversations);
+    return (
+      <Card className="lg:col-span-1">
+        <CardContent className="p-8 text-center text-gray-500">
+          <MessageSquare className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+          <p>Loading conversations...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const filteredConversations = conversations.filter(conversation => {
     if (conversation.isArchived) return false;
     
