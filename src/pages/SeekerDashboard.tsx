@@ -31,6 +31,13 @@ const SeekerDashboard = () => {
   const [displayName, setDisplayName] = useState("Your Name");
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 
+  // Fix: Move navigation logic to useEffect
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     if (userProfile && user) {
       // Parse full name or use email
@@ -59,10 +66,13 @@ const SeekerDashboard = () => {
     return displayName?.slice(0, 2).toUpperCase() || 'U';
   };
 
-  // Show loading or redirect if not authenticated
+  // Show loading while checking authentication
   if (!user) {
-    navigate("/login");
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
   }
 
   const dashboardStats = [
