@@ -14,6 +14,55 @@ const Messages = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  // Mock data for conversations and messages
+  const mockConversations = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      company: "TechCorp Inc.",
+      lastMessage: "Thanks for your application!",
+      timestamp: "2 hours ago",
+      unread: true,
+      avatar: null,
+      role: "HR Manager",
+      isFavorite: false,
+      isArchived: false
+    },
+    {
+      id: 2,
+      name: "Mike Chen",
+      company: "StartupXYZ",
+      lastMessage: "When can you start?",
+      timestamp: "1 day ago",
+      unread: false,
+      avatar: null,
+      role: "CTO",
+      isFavorite: true,
+      isArchived: false
+    }
+  ];
+
+  const mockMessages = [
+    {
+      id: 1,
+      sender: "other" as const,
+      content: "Hi! Thanks for applying to our position.",
+      timestamp: "10:30 AM",
+      senderName: "Sarah Johnson"
+    },
+    {
+      id: 2,
+      sender: "me" as const,
+      content: "Thank you for considering my application!",
+      timestamp: "10:32 AM",
+      senderName: "You"
+    }
+  ];
+
+  const selectedConversation = mockConversations.find(c => c.id === Number(selectedConversationId));
 
   useEffect(() => {
     if (!user) {
@@ -66,6 +115,22 @@ const Messages = () => {
       isActive: false
     }
   ];
+
+  const handleSendMessage = (message: string) => {
+    console.log("Sending message:", message);
+  };
+
+  const handleToggleFavorite = () => {
+    console.log("Toggle favorite for conversation:", selectedConversationId);
+  };
+
+  const handleArchiveConversation = () => {
+    console.log("Archive conversation:", selectedConversationId);
+  };
+
+  const handleDeleteConversation = () => {
+    console.log("Delete conversation:", selectedConversationId);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -126,17 +191,25 @@ const Messages = () => {
 
         <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
           {/* Conversations List */}
-          <Card className="p-4 lg:col-span-1">
-            <ConversationList
-              selectedConversationId={selectedConversationId}
-              onSelectConversation={setSelectedConversationId}
-            />
-          </Card>
+          <ConversationList
+            conversations={mockConversations}
+            selectedConversation={Number(selectedConversationId) || 0}
+            searchTerm={searchTerm}
+            showFavoritesOnly={showFavoritesOnly}
+            onConversationSelect={(id: number) => setSelectedConversationId(id.toString())}
+            onSearchChange={setSearchTerm}
+            onToggleFavoritesFilter={() => setShowFavoritesOnly(!showFavoritesOnly)}
+          />
 
           {/* Message View */}
-          <Card className="p-4 lg:col-span-2">
-            <MessageView conversationId={selectedConversationId} />
-          </Card>
+          <MessageView
+            conversation={selectedConversation}
+            messages={mockMessages}
+            onSendMessage={handleSendMessage}
+            onToggleFavorite={handleToggleFavorite}
+            onArchiveConversation={handleArchiveConversation}
+            onDeleteConversation={handleDeleteConversation}
+          />
         </div>
       </div>
       
