@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import DocumentControls from "@/components/vault/DocumentControls";
 import VerifyDocumentsDialog from "@/components/vault/VerifyDocumentsDialog";
 import SharePortfolioDialog from "@/components/vault/SharePortfolioDialog";
 import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
+import HomeFooter from "@/components/home/HomeFooter";
 
 const DocumentVault = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
@@ -216,6 +218,8 @@ const DocumentVault = () => {
           documents={documents}
         />
       </div>
+      
+      <HomeFooter />
     </div>
   );
 };

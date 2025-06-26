@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Search, MapPin, Clock, DollarSign, Bookmark, Filter } from "lucide-reac
 import JobsHeader from "@/components/jobs/JobsHeader";
 import JobSearchFilters from "@/components/jobs/JobSearchFilters";
 import JobList from "@/components/jobs/JobList";
+import HomeFooter from "@/components/home/HomeFooter";
 
 // Mock job data for demonstration
 const mockJobs = [
@@ -158,6 +158,8 @@ const FindJobs = () => {
           </div>
         </div>
       </div>
+      
+      <HomeFooter />
     </div>
   );
 };

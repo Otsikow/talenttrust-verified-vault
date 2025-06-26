@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +12,7 @@ import HomeFooter from "@/components/home/HomeFooter";
 const Messages = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
@@ -62,7 +61,7 @@ const Messages = () => {
     }
   ];
 
-  const selectedConversation = mockConversations.find(c => c.id === Number(selectedConversationId));
+  const selectedConversation = mockConversations.find(c => c.id === selectedConversationId);
 
   useEffect(() => {
     if (!user) {
@@ -193,10 +192,10 @@ const Messages = () => {
           {/* Conversations List */}
           <ConversationList
             conversations={mockConversations}
-            selectedConversation={Number(selectedConversationId) || 0}
+            selectedConversation={selectedConversationId}
             searchTerm={searchTerm}
             showFavoritesOnly={showFavoritesOnly}
-            onConversationSelect={(id: number) => setSelectedConversationId(id.toString())}
+            onConversationSelect={(id: number) => setSelectedConversationId(id)}
             onSearchChange={setSearchTerm}
             onToggleFavoritesFilter={() => setShowFavoritesOnly(!showFavoritesOnly)}
           />
