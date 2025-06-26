@@ -21,6 +21,7 @@ import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import PricingPage from "./pages/PricingPage";
 import Admin from "./pages/Admin";
+import Network from "./pages/Network";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/network" element={<Network />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

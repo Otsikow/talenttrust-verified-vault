@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import LinkedInStyleNavigation from "@/components/navigation/LinkedInStyleNavigation";
 import { 
   Bell, 
   Shield, 
@@ -15,10 +16,8 @@ import {
   Trash2,
   Mail
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const Notifications = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
 
   // Mock notifications data with British terminology
@@ -114,36 +113,10 @@ const Notifications = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <img src="/lovable-uploads/2c6e0c31-9b9d-41e7-8a6c-71bbba71fe34.png" alt="TrustTalent Logo" className="h-6 w-6" />
-              <span className="text-xl font-bold text-gray-900">TrustTalent</span>
-            </div>
-            <nav className="hidden md:flex space-x-6">
-              <Button variant="ghost" onClick={() => navigate("/dashboard/seeker")}>Dashboard</Button>
-              <Button variant="ghost" onClick={() => navigate("/jobs")}>Find Jobs</Button>
-              <Button variant="ghost" onClick={() => navigate("/vault")}>My Vault</Button>
-              <Button variant="ghost" onClick={() => navigate("/messages")}>Messages</Button>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="font-medium">
-              <Bell className="h-4 w-4 mr-2" />
-              Notifications
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
-              <span className="sr-only">Profile</span>
-              👤
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <LinkedInStyleNavigation />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -217,12 +190,12 @@ const Notifications = () => {
                               </Button>
                             )}
                             {notification.type === "message" && (
-                              <Button size="sm" variant="outline" onClick={() => navigate("/messages")}>
+                              <Button size="sm" variant="outline">
                                 Reply
                               </Button>
                             )}
                             {notification.type === "verification" && (
-                              <Button size="sm" variant="outline" onClick={() => navigate("/vault")}>
+                              <Button size="sm" variant="outline">
                                 View Documents
                               </Button>
                             )}
