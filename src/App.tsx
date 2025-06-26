@@ -23,6 +23,9 @@ import PricingPage from "./pages/PricingPage";
 import Admin from "./pages/Admin";
 import Network from "./pages/Network";
 import NotFound from "./pages/NotFound";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import HelpCenter from "./pages/HelpCenter";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +53,9 @@ const App = () => (
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/network" element={<Network />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/help" element={<HelpCenter />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
