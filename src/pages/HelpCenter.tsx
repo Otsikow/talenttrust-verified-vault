@@ -1,10 +1,13 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { HelpCircle, Search, MessageSquare, FileText, Shield, Briefcase } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { BackButton } from "@/components/auth/BackButton";
 
 const HelpCenter = () => {
+  const navigate = useNavigate();
+
   const faqItems = [
     {
       question: "How do I verify my documents?",
@@ -30,6 +33,7 @@ const HelpCenter = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
+      <BackButton onClick={() => navigate(-1)} text="Back" />
       <div className="max-w-4xl mx-auto p-6 space-y-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
