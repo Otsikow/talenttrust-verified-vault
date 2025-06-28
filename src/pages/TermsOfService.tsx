@@ -1,11 +1,16 @@
 
+import { useNavigate } from "react-router-dom";
+import { BackButton } from "@/components/auth/BackButton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Shield, Scale, AlertTriangle } from "lucide-react";
 
 const TermsOfService = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
+      <BackButton onClick={() => navigate(-1)} text="Back" />
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
