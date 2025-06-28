@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -23,6 +22,12 @@ import PricingPage from "./pages/PricingPage";
 import Admin from "./pages/Admin";
 import Network from "./pages/Network";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import Cookies from "./pages/Cookies";
+import GDPR from "./pages/GDPR";
+import Accessibility from "./pages/Accessibility";
+import Sitemap from "./pages/Sitemap";
+import Security from "./pages/Security";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import HelpCenter from "./pages/HelpCenter";
@@ -53,6 +58,12 @@ const App = () => (
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/network" element={<Network />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/gdpr" element={<GDPR />} />
+            <Route path="/accessibility" element={<Accessibility />} />
+            <Route path="/sitemap" element={<Sitemap />} />
+            <Route path="/security" element={<Security />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/help" element={<HelpCenter />} />
