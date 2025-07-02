@@ -14,8 +14,7 @@ const HeroSection = () => {
           <span className="block text-blue-600 mt-2">The Future of Talent Verification</span>
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          TrustTalent revolutionises hiring and admissions with AI-powered verification of degrees, certificates, 
-          references, and work samples. Build trust, reduce fraud, make confident decisions.
+          TrustTalent uses AI to instantly verify degrees, certificates, and references for hiring and admissions. Reduce fraud, build trust, and make confident decisions—fast.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=seeker")}>
