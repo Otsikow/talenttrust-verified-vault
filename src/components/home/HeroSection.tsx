@@ -9,6 +9,13 @@ const HeroSection = () => {
   return (
     <section className="container mx-auto px-4 py-12 sm:py-16 text-center">
       <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <img 
+            src="/lovable-uploads/b8a6fda3-fb40-401f-9849-f444a08bec9b.png" 
+            alt="TrustTalent Logo" 
+            className="mx-auto h-16 sm:h-20 w-auto"
+          />
+        </div>
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
           Verify. Trust. Hire.
           <span className="block text-blue-600 mt-2">The Future of Talent Verification</span>
