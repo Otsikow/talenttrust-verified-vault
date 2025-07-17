@@ -9,19 +9,13 @@ const HeroSection = () => {
   return (
     <section className="container mx-auto px-4 py-12 sm:py-16 text-center">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <img 
-            src="/lovable-uploads/b8a6fda3-fb40-401f-9849-f444a08bec9b.png" 
-            alt="TrustTalent Logo" 
-            className="mx-auto h-16 sm:h-20 w-auto"
-          />
-        </div>
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
           Verify. Trust. Hire.
           <span className="block text-blue-600 mt-2">The Future of Talent Verification</span>
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          TrustTalent uses AI to instantly verify degrees, certificates, and references for hiring and admissions. Reduce fraud, build trust, and make confident decisions—fast.
+          TrustTalent revolutionises hiring and admissions with AI-powered verification of degrees, certificates, 
+          references, and work samples. Build trust, reduce fraud, make confident decisions.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="text-lg px-8 py-4" onClick={() => navigate("/register?role=seeker")}>

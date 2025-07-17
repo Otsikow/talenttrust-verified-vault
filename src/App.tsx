@@ -31,6 +31,8 @@ import Security from "./pages/Security";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import HelpCenter from "./pages/HelpCenter";
+import Success from "./pages/success";
+import Portfolio from "./pages/Portfolio";
 
 const queryClient = new QueryClient();
 
@@ -48,7 +50,10 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard/seeker" element={<SeekerDashboard />} />
             <Route path="/dashboard/employer" element={<EmployerDashboard />} />
-            <Route path="/dashboard/university" element={<UniversityDashboard />} />
+            <Route
+              path="/dashboard/university"
+              element={<UniversityDashboard />}
+            />
             <Route path="/vault" element={<DocumentVault />} />
             <Route path="/jobs" element={<FindJobs />} />
             <Route path="/post-job" element={<PostJob />} />
@@ -67,6 +72,8 @@ const App = () => (
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/help" element={<HelpCenter />} />
+            <Route path="/portfolio/:portfolioId" element={<Portfolio />} />
+            <Route path="/success" element={<Success />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
